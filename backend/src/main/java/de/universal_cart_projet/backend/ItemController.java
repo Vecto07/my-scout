@@ -18,7 +18,7 @@ public class ItemController {
      @GetMapping
     public List<Item> alleArtikel() {
         return List.of(
-                new Item(1L, "Logitech MX Master 3S", new BigDecimal("89.99"), "EUR",
+                new Item(1L, "RTX 5090", new BigDecimal("7500.99"), "EUR",
                         "https://example.com/bild1.jpg", "amazon.de",
                         "https://www.amazon.de/dp/BEISPIEL1", 1,
                         Instant.parse("2026-10-20T14:30:00Z")),
