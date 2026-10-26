@@ -12,7 +12,7 @@ Das Frontend ist eine responsive, frameworkfreie HTML-, CSS- und JavaScript-Anwe
 - `src/Warenkorb_Desin.css`: Layout, Farben und responsive Regeln.
 - `src/Warenkorb_Backend.css`: ergänzende Regeln, etwa für Produktbilder.
 
-Alle Frontend-Dateien liegen in `src`. Die HTML-Datei referenziert die Stylesheets relativ aus demselben Verzeichnis.
+Alle Dateien der Webanwendung liegen in `src`; diese Dokumentation bleibt im Frontend-Stamm. Die HTML-Datei referenziert die Stylesheets relativ aus demselben Verzeichnis.
 
 ## Lokal starten
 
