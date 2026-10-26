@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Universal Cart</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <h1>Universal Cart</h1>
+
+      <section id="login-section">
+        <h2>Login</h2>
+        <!-- Placeholder only: any non-empty credentials are accepted. -->
+        <form id="login-form">
+          <label>
+            Email or username
+            <input id="email" type="text" autocomplete="username" required>
+          </label>
+          <label>
+            Password
+            <input id="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button type="submit">Log in</button>
+        </form>
+      </section>
+
+      <section id="cart-section" hidden>
+        <h2>Add product</h2>
+        <p>Save the current page to your universal cart.</p>
+        <button id="add-product" type="button">Add current page</button>
+        <button id="logout" type="button">Log out</button>
+
+        <h2>Last scraped product</h2>
+        <dl id="product-details">
+          <dt>Name</dt>
+          <dd id="product-name">None yet</dd>
+          <dt>Prices found</dt>
+          <dd id="product-prices">None yet</dd>
+          <dt>Link</dt>
+          <dd id="product-url">-</dd>
+          <dt>Source</dt>
+          <dd id="product-source">-</dd>
+        </dl>
+      </section>
+
+      <p id="status" role="status" aria-live="polite"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
