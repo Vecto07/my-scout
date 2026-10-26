@@ -1,5 +1,6 @@
 package de.universal_cart_projet.backend;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,10 +25,7 @@ public class Artikel {
     @JoinColumn(name = "benutzer_id", nullable = false)
     private Benutzer benutzer;
 
-    // Zwingend erforderlich für Spring Boot
     public Artikel() {}
-
-    // --- Alle Getter und Setter ---
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -47,6 +45,7 @@ public class Artikel {
     public String getBildUrl() { return bildUrl; }
     public void setBildUrl(String bildUrl) { this.bildUrl = bildUrl; }
 
+    @JsonIgnore
     public Benutzer getBenutzer() { return benutzer; }
     public void setBenutzer(Benutzer benutzer) { this.benutzer = benutzer; }
 }

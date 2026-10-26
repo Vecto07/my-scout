@@ -24,7 +24,6 @@ public class ArtikelController {
         Optional<Benutzer> benutzer = benutzerRepository.findByBenutzername(principal.getName());
         if (benutzer.isEmpty()) return ResponseEntity.status(401).build();
 
-        // Holt nur die Artikel des eingeloggten Nutzers
         List<Artikel> meineArtikel = artikelRepository.findByBenutzer(benutzer.get());
         return ResponseEntity.ok(meineArtikel);
     }
@@ -34,14 +33,22 @@ public class ArtikelController {
         Optional<Benutzer> benutzer = benutzerRepository.findByBenutzername(principal.getName());
         if (benutzer.isEmpty()) return ResponseEntity.status(401).build();
 
-        // Verknüpft den neuen Artikel vor dem Speichern fest mit dem Nutzer
         neuerArtikel.setBenutzer(benutzer.get());
         Artikel gespeicherterArtikel = artikelRepository.save(neuerArtikel);
         return ResponseEntity.ok(gespeicherterArtikel);
     }
 
     @DeleteMapping("/{id}")
-    public void artikelLoeschen(@PathVariable Long id) {
-        artikelRepository.deleteById(id);
+    public ResponseEntity<Void> artikelLoeschen(@PathVariable Long id, Principal principal) {
+        Optional<Benutzer> benutzer = benutzerRepository.findByBenutzername(principal.getName());
+        if (benutzer.isEmpty()) return ResponseEntity.status(401).build();
+
+        Optional<Artikel> artikel = artikelRepository.findById(id);
+        if (artikel.isEmpty() || !artikel.get().getBenutzer().getId().equals(benutzer.get().getId())) {
+            return ResponseEntity.notFound().build();
+        }
+
+        artikelRepository.delete(artikel.get());
+        return ResponseEntity.noContent().build();
     }
 }
