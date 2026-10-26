@@ -8,11 +8,11 @@ Das Frontend ist eine responsive, frameworkfreie HTML-, CSS- und JavaScript-Anwe
 
 - `index.html`: Einstieg im Frontend-Stamm, leitet auf `src/Warenkorb.html` weiter.
 - `src/Warenkorb.html`: Seitenstruktur, Formulare und zugängliche Statusbereiche.
-- `Warenkorb.js`: Ereignisse, UI-Zustand und REST-Kommunikation.
-- `Warenkorb_Desin.css`: Layout, Farben und responsive Regeln.
+- `src/Warenkorb.js`: Ereignisse, UI-Zustand und REST-Kommunikation.
+- `Warenkorb_Desin.css`: Layout, Farben und responsive Regeln im Frontend-Stamm.
 - `Warenkorb_Backend.css`: ergänzende Regeln, etwa für Produktbilder.
 
-Die HTML-Datei nutzt relative Pfade zum JavaScript und zu den Stylesheets im Frontend-Stamm. Werden die Dateien verschoben, müssen diese Pfade gemeinsam angepasst werden.
+Die HTML-Datei nutzt relative Pfade zu den Stylesheets im Frontend-Stamm. Werden die Dateien verschoben, müssen diese Pfade gemeinsam angepasst werden.
 
 ## Lokal starten
 
@@ -23,7 +23,7 @@ Die HTML-Datei nutzt relative Pfade zum JavaScript und zu den Stylesheets im Fro
 
 ## Ablauf und API
 
-`Warenkorb.js` liest den API-Ursprung aus `meta[name="api-base"]`. Der zentrale Request-Helper sendet JSON und hängt, sofern vorhanden, den JWT im Bearer-Schema an. Fehlerhafte HTTP-Antworten werden als verständliche Meldungen in den Formularen angezeigt.
+`src/Warenkorb.js` liest den API-Ursprung aus `meta[name="api-base"]`. Der zentrale Request-Helper sendet JSON und hängt, sofern vorhanden, den JWT im Bearer-Schema an. Fehlerhafte HTTP-Antworten werden als verständliche Meldungen in den Formularen angezeigt.
 
 | Aktion | HTTP | Pfad | Request bzw. Antwort |
 |---|---|---|---|
@@ -46,4 +46,4 @@ Die Registrierung gibt einen Text zurück. Danach meldet sich das Frontend autom
 
 ## Änderungen
 
-Bei Änderungen an Formularen `src/Warenkorb.html`, die Elementreferenzen und Payloads in `Warenkorb.js` sowie die Java-Felder im Backend gemeinsam prüfen. Neue Layoutregeln kommen in `Warenkorb_Desin.css`; ergänzende Backend-Darstellung kann in `Warenkorb_Backend.css` bleiben. Bei Änderungen des API-Ursprungs `src/Warenkorb.html` anpassen und CORS der Backend-Umgebung prüfen.
+Bei Änderungen an Formularen `src/Warenkorb.html`, die Elementreferenzen und Payloads in `src/Warenkorb.js` sowie die Java-Felder im Backend gemeinsam prüfen. Neue Layoutregeln kommen in `Warenkorb_Desin.css`; ergänzende Backend-Darstellung kann in `Warenkorb_Backend.css` bleiben. Bei Änderungen des API-Ursprungs `src/Warenkorb.html` anpassen und CORS der Backend-Umgebung prüfen.

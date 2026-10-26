@@ -14,120 +14,27 @@
   <div class="page-shell">
     <header class="topbar">
       <a class="brand" href="Warenkorb.html" aria-label="Warenkorb Startseite">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" fill="none"><path d="M5 7h3l2.7 13.1a2 2 0 0 0 2 1.6h10.8a2 2 0 0 0 1.9-1.4L28 11H9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13.5" cy="26" r="1.8" fill="currentColor"/><circle cx="23" cy="26" r="1.8" fill="currentColor"/></svg>
-        </span>
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M5 7h3l2.7 13.1a2 2 0 0 0 2 1.6h10.8a2 2 0 0 0 1.9-1.4L28 11H9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13.5" cy="26" r="1.8" fill="currentColor"/><circle cx="23" cy="26" r="1.8" fill="currentColor"/></svg></span>
         <span>Warenkorb<span class="brand-period">.</span></span>
       </a>
       <div class="header-controls">
-        <div class="theme-picker" id="theme-picker" role="group" aria-label="Darstellung auswählen">
-          <span class="theme-picker-label">MODUS</span>
-          <button class="theme-choice is-active" type="button" data-theme="light" aria-pressed="true">Light</button>
-          <button class="theme-choice" type="button" data-theme="dark" aria-pressed="false">Dark</button>
-        </div>
+        <div class="theme-picker" id="theme-picker" role="group" aria-label="Darstellung auswählen"><span class="theme-picker-label">MODUS</span><button class="theme-choice is-active" type="button" data-theme="light" aria-pressed="true">Light</button><button class="theme-choice" type="button" data-theme="dark" aria-pressed="false">Dark</button></div>
         <span class="topbar-note"><span class="status-dot"></span> Links aus deinen Shops. Ein Ort.</span>
         <button class="text-button is-hidden" id="logout-button" type="button">Abmelden <span aria-hidden="true">↗</span></button>
       </div>
     </header>
-
     <main>
       <section class="auth-layout" id="auth-view" aria-labelledby="auth-heading">
-        <div class="auth-copy">
-          <span class="eyebrow"><span class="eyebrow-line"></span> DEINE LINKS. DEIN ÜBERBLICK.</span>
-          <h1 id="auth-heading">Gute Funde.<br><span>Wiedergefunden.</span></h1>
-          <p>Produkte aus deinen Lieblingsshops. An einem Ort gespeichert und jederzeit griffbereit.</p>
-          <div class="auth-points">
-            <span><span class="check-icon">✓</span> Produkte aus deinen Shops gemeinsam verwalten</span>
-            <span><span class="check-icon">✓</span> Schnell suchen, direkt zum Shop wechseln</span>
-            <span><span class="check-icon">✓</span> Deine Sammlung bleibt deinem Konto zugeordnet</span>
-          </div>
-        </div>
-
-        <div class="auth-card">
-          <div class="card-heading">
-            <span class="card-icon" aria-hidden="true">↗</span>
-            <span class="eyebrow">DEIN PERSÖNLICHER SAMMELPLATZ</span>
-          </div>
-          <h2 id="form-heading">Willkommen zurück.</h2>
-          <p class="card-description" id="form-description">Melde dich an, um deine gespeicherten Links zu öffnen.</p>
-
-          <div class="auth-tabs" role="tablist" aria-label="Anmelden oder registrieren">
-            <button class="auth-tab is-active" id="login-tab" type="button" role="tab" aria-selected="true">Anmelden</button>
-            <button class="auth-tab" id="register-tab" type="button" role="tab" aria-selected="false">Konto erstellen</button>
-          </div>
-
-          <form id="auth-form">
-            <label for="username">Benutzername</label>
-            <div class="input-wrap"><span class="input-icon" aria-hidden="true">♙</span><input id="username" name="username" type="text" autocomplete="username" placeholder="Dein Benutzername" maxlength="100" required></div>
-            <div id="register-email-field" class="is-hidden">
-              <label for="email">E-Mail-Adresse</label>
-              <div class="input-wrap"><span class="input-icon" aria-hidden="true">✉</span><input id="email" name="email" type="email" autocomplete="email" placeholder="du@beispiel.de"></div>
-            </div>
-            <label for="password">Passwort</label>
-            <div class="input-wrap"><span class="input-icon lock-icon" aria-hidden="true">⌑</span><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Mindestens 8 Zeichen" minlength="8" maxlength="128" required></div>
-            <p class="form-message" id="auth-message" role="status" aria-live="polite"></p>
-            <button class="primary-button auth-submit" id="auth-submit" type="submit">Anmelden <span aria-hidden="true">→</span></button>
-          </form>
-          <p class="privacy-note"><span aria-hidden="true">♧</span> Dein Passwort wird geschützt gespeichert.</p>
-        </div>
+        <div class="auth-copy"><span class="eyebrow"><span class="eyebrow-line"></span> DEINE LINKS. DEIN ÜBERBLICK.</span><h1 id="auth-heading">Gute Funde.<br><span>Wiedergefunden.</span></h1><p>Produkte aus deinen Lieblingsshops. An einem Ort gespeichert und jederzeit griffbereit.</p><div class="auth-points"><span><span class="check-icon">✓</span> Produkte aus deinen Shops gemeinsam verwalten</span><span><span class="check-icon">✓</span> Schnell suchen, direkt zum Shop wechseln</span><span><span class="check-icon">✓</span> Deine Sammlung bleibt deinem Konto zugeordnet</span></div></div>
+        <div class="auth-card"><div class="card-heading"><span class="card-icon" aria-hidden="true">↗</span><span class="eyebrow">DEIN PERSÖNLICHER SAMMELPLATZ</span></div><h2 id="form-heading">Willkommen zurück.</h2><p class="card-description" id="form-description">Melde dich an, um deine gespeicherten Links zu öffnen.</p><div class="auth-tabs" role="tablist" aria-label="Anmelden oder registrieren"><button class="auth-tab is-active" id="login-tab" type="button" role="tab" aria-selected="true">Anmelden</button><button class="auth-tab" id="register-tab" type="button" role="tab" aria-selected="false">Konto erstellen</button></div>
+          <form id="auth-form"><label for="username">Benutzername</label><div class="input-wrap"><span class="input-icon" aria-hidden="true">♙</span><input id="username" name="username" type="text" autocomplete="username" placeholder="Dein Benutzername" maxlength="100" required></div><div id="register-email-field" class="is-hidden"><label for="email">E-Mail-Adresse</label><div class="input-wrap"><span class="input-icon" aria-hidden="true">✉</span><input id="email" name="email" type="email" autocomplete="email" placeholder="du@beispiel.de"></div></div><label for="password">Passwort</label><div class="input-wrap"><span class="input-icon lock-icon" aria-hidden="true">⌑</span><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Mindestens 8 Zeichen" minlength="8" maxlength="128" required></div><p class="form-message" id="auth-message" role="status" aria-live="polite"></p><button class="primary-button auth-submit" id="auth-submit" type="submit">Anmelden <span aria-hidden="true">→</span></button></form><p class="privacy-note"><span aria-hidden="true">♧</span> Dein Passwort wird geschützt gespeichert.</p></div>
       </section>
-
-      <section class="dashboard is-hidden" id="dashboard-view" aria-labelledby="dashboard-heading">
-        <div class="dashboard-heading">
-          <div>
-            <span class="eyebrow"><span class="eyebrow-line"></span> DEIN PERSÖNLICHER SAMMELPLATZ</span>
-            <h1 id="dashboard-heading">Deine Sammlung</h1>
-            <p id="welcome-message">Alle gespeicherten Produkte an einem Ort.</p>
-          </div>
-          <div class="total-card"><span class="total-icon" aria-hidden="true">↗</span><span><strong id="item-count">0</strong><small>gespeicherte Produkte</small></span></div>
-        </div>
-
-        <div class="content-grid">
-          <section class="links-panel" aria-labelledby="links-heading">
-            <div class="panel-heading">
-              <div><span class="eyebrow">DEINE SAMMLUNG</span><h2 id="links-heading">Gespeicherte Produkte</h2></div>
-            </div>
-            <label class="search-field" for="link-search">
-              <span class="search-icon" aria-hidden="true">⌕</span>
-              <input id="link-search" type="search" autocomplete="off" placeholder="Nach Produkt, Shop oder URL suchen" aria-label="Produkte nach Name, Shop oder Adresse durchsuchen">
-            </label>
-            <div class="link-list" id="link-list" aria-live="polite"></div>
-            <div class="empty-state" id="empty-state">
-              <span class="empty-icon" aria-hidden="true">＋</span>
-              <h3>Hier ist noch Platz für gute Funde.</h3>
-              <p>Füge dein erstes Produkt hinzu – du findest es hier jederzeit wieder.</p>
-              <button class="secondary-button" type="button" id="empty-add-button">Erstes Produkt speichern <span aria-hidden="true">→</span></button>
-            </div>
-          </section>
-
-          <aside class="add-panel" id="add-panel" aria-labelledby="add-heading">
-            <div class="add-panel-top"><span class="add-icon" aria-hidden="true">＋</span><span class="eyebrow">FÜR SPÄTER GEMERKT</span></div>
-            <h2 id="add-heading">Neues Produkt<br>hinzufügen</h2>
-            <p class="add-intro">Ein guter Fund verdient einen festen Platz.</p>
-            <form id="link-form">
-              <label for="link-title">Wie heißt das Produkt?</label>
-              <input id="link-title" name="title" type="text" maxlength="255" placeholder="z. B. Die perfekte Lampe" required>
-              <label for="link-url">Link zum Shop</label>
-              <div class="input-wrap url-wrap"><span class="input-icon" aria-hidden="true">↗</span><input id="link-url" name="url" type="url" placeholder="https://beispiel.de/produkt" required></div>
-              <label for="link-shop">Shop <span class="optional-label">optional</span></label>
-              <input id="link-shop" name="shopName" type="text" maxlength="255" placeholder="z. B. Lieblingsshop">
-              <label for="link-price">Preis in Euro <span class="optional-label">optional</span></label>
-              <input id="link-price" name="price" type="number" min="0" step="0.01" placeholder="0,00">
-              <label for="link-image">Bild-URL <span class="optional-label">optional</span></label>
-              <div class="input-wrap url-wrap"><span class="input-icon" aria-hidden="true">▧</span><input id="link-image" name="image" type="url" placeholder="https://beispiel.de/bild.jpg"></div>
-              <p class="form-message" id="link-message" role="status" aria-live="polite"></p>
-              <button class="primary-button save-button" type="submit">Link speichern <span aria-hidden="true">→</span></button>
-            </form>
-            <div class="panel-footnote"><span aria-hidden="true">✳</span> Funktioniert mit jedem Online-Shop.</div>
-          </aside>
-        </div>
-        <p class="storage-note"><span class="status-dot"></span> Deine Sammlung wird sicher auf dem Server gespeichert.</p>
-      </section>
+      <section class="dashboard is-hidden" id="dashboard-view" aria-labelledby="dashboard-heading"><div class="dashboard-heading"><div><span class="eyebrow"><span class="eyebrow-line"></span> DEIN PERSÖNLICHER SAMMELPLATZ</span><h1 id="dashboard-heading">Deine Sammlung</h1><p id="welcome-message">Alle gespeicherten Produkte an einem Ort.</p></div><div class="total-card"><span class="total-icon" aria-hidden="true">↗</span><span><strong id="item-count">0</strong><small>gespeicherte Produkte</small></span></div></div>
+        <div class="content-grid"><section class="links-panel" aria-labelledby="links-heading"><div class="panel-heading"><div><span class="eyebrow">DEINE SAMMLUNG</span><h2 id="links-heading">Gespeicherte Produkte</h2></div></div><label class="search-field" for="link-search"><span class="search-icon" aria-hidden="true">⌕</span><input id="link-search" type="search" autocomplete="off" placeholder="Nach Produkt, Shop oder URL suchen" aria-label="Produkte nach Name, Shop oder Adresse durchsuchen"></label><div class="link-list" id="link-list" aria-live="polite"></div><div class="empty-state" id="empty-state"><span class="empty-icon" aria-hidden="true">＋</span><h3>Hier ist noch Platz für gute Funde.</h3><p>Füge dein erstes Produkt hinzu – du findest es hier jederzeit wieder.</p><button class="secondary-button" type="button" id="empty-add-button">Erstes Produkt speichern <span aria-hidden="true">→</span></button></div></section>
+          <aside class="add-panel" id="add-panel" aria-labelledby="add-heading"><div class="add-panel-top"><span class="add-icon" aria-hidden="true">＋</span><span class="eyebrow">FÜR SPÄTER GEMERKT</span></div><h2 id="add-heading">Neues Produkt<br>hinzufügen</h2><p class="add-intro">Ein guter Fund verdient einen festen Platz.</p><form id="link-form"><label for="link-title">Wie heißt das Produkt?</label><input id="link-title" name="title" type="text" maxlength="255" placeholder="z. B. Die perfekte Lampe" required><label for="link-url">Link zum Shop</label><div class="input-wrap url-wrap"><span class="input-icon" aria-hidden="true">↗</span><input id="link-url" name="url" type="url" placeholder="https://beispiel.de/produkt" required></div><label for="link-shop">Shop <span class="optional-label">optional</span></label><input id="link-shop" name="shopName" type="text" maxlength="255" placeholder="z. B. Lieblingsshop"><label for="link-price">Preis in Euro <span class="optional-label">optional</span></label><input id="link-price" name="price" type="number" min="0" step="0.01" placeholder="0,00"><label for="link-image">Bild-URL <span class="optional-label">optional</span></label><div class="input-wrap url-wrap"><span class="input-icon" aria-hidden="true">▧</span><input id="link-image" name="image" type="url" placeholder="https://beispiel.de/bild.jpg"></div><p class="form-message" id="link-message" role="status" aria-live="polite"></p><button class="primary-button save-button" type="submit">Link speichern <span aria-hidden="true">→</span></button></form><div class="panel-footnote"><span aria-hidden="true">✳</span> Funktioniert mit jedem Online-Shop.</div></aside></div><p class="storage-note"><span class="status-dot"></span> Deine Sammlung wird sicher auf dem Server gespeichert.</p></section>
     </main>
-
     <footer class="footer"><span>Warenkorb<span class="brand-period">.</span> <span class="footer-muted">Deine Lieblingsprodukte. Alles im Blick.</span></span><span class="footer-local"><span class="status-dot"></span> Privat &amp; persönlich</span></footer>
   </div>
-
-  <script src="../Warenkorb.js" defer></script>
+  <script src="Warenkorb.js" defer></script>
 </body>
 </html>
