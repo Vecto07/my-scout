@@ -6,19 +6,19 @@ Das Frontend ist eine responsive, frameworkfreie HTML-, CSS- und JavaScript-Anwe
 
 ## Dateistruktur
 
-- `index.html`: Einstieg im Frontend-Stamm, leitet auf `src/Warenkorb.html` weiter.
+- `src/index.html`: Einstieg und Weiterleitung zu `src/Warenkorb.html`.
 - `src/Warenkorb.html`: Seitenstruktur, Formulare und zugängliche Statusbereiche.
 - `src/Warenkorb.js`: Ereignisse, UI-Zustand und REST-Kommunikation.
-- `Warenkorb_Desin.css`: Layout, Farben und responsive Regeln im Frontend-Stamm.
-- `Warenkorb_Backend.css`: ergänzende Regeln, etwa für Produktbilder.
+- `src/Warenkorb_Desin.css`: Layout, Farben und responsive Regeln.
+- `src/Warenkorb_Backend.css`: ergänzende Regeln, etwa für Produktbilder.
 
-Die HTML-Datei nutzt relative Pfade zu den Stylesheets im Frontend-Stamm. Werden die Dateien verschoben, müssen diese Pfade gemeinsam angepasst werden.
+Alle Frontend-Dateien liegen in `src`. Die HTML-Datei referenziert die Stylesheets relativ aus demselben Verzeichnis.
 
 ## Lokal starten
 
 1. PostgreSQL starten und die Verbindung in `../backend/src/main/resources/application.properties` passend zur lokalen Umgebung konfigurieren.
 2. Java 21 verwenden und Spring Boot aus dem `backend`-Ordner starten: unter Windows `mvnw.cmd spring-boot:run`, unter macOS/Linux `./mvnw spring-boot:run`.
-3. Das Verzeichnis `frontend` mit einem Webserver bereitstellen, z. B. Apache unter XAMPP. Über `http://localhost/...` und nicht als `file://` öffnen.
+3. Das Verzeichnis `frontend` mit einem Webserver bereitstellen, z. B. Apache unter XAMPP. `src/index.html` über `http://localhost/.../src/` und nicht als `file://` öffnen.
 4. Die API-Adresse ist standardmäßig `http://localhost:8080` und wird durch das `api-base`-Meta-Element in `src/Warenkorb.html` konfiguriert.
 
 ## Ablauf und API
@@ -46,4 +46,4 @@ Die Registrierung gibt einen Text zurück. Danach meldet sich das Frontend autom
 
 ## Änderungen
 
-Bei Änderungen an Formularen `src/Warenkorb.html`, die Elementreferenzen und Payloads in `src/Warenkorb.js` sowie die Java-Felder im Backend gemeinsam prüfen. Neue Layoutregeln kommen in `Warenkorb_Desin.css`; ergänzende Backend-Darstellung kann in `Warenkorb_Backend.css` bleiben. Bei Änderungen des API-Ursprungs `src/Warenkorb.html` anpassen und CORS der Backend-Umgebung prüfen.
+Bei Änderungen an Formularen `src/Warenkorb.html`, die Elementreferenzen und Payloads in `src/Warenkorb.js` sowie die Java-Felder im Backend gemeinsam prüfen. Neue Layoutregeln kommen in `src/Warenkorb_Desin.css`; ergänzende Backend-Darstellung kann in `src/Warenkorb_Backend.css` bleiben. Bei Änderungen des API-Ursprungs `src/Warenkorb.html` anpassen und CORS der Backend-Umgebung prüfen.
