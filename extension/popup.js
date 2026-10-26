@@ -9,6 +9,7 @@ const productName = document.querySelector("#product-name");
 const productPrices = document.querySelector("#product-prices");
 const productUrl = document.querySelector("#product-url");
 const productSource = document.querySelector("#product-source");
+const productError = document.querySelector("#product-error");
 
 // Chrome and Firefox expose the same WebExtension APIs differently:
 // Firefox returns promises, while Chrome may require callbacks.
@@ -91,11 +92,9 @@ function showProduct(product) {
     return;
   }
 
-  productName.textContent = product.error || product.name || "Unknown product";
+  productName.textContent = product.name || "Unknown product";
   productPrices.replaceChildren();
-  if (product.error) {
-    productPrices.textContent = "-";
-  } else if (!product.prices?.length) {
+  if (!product.prices?.length) {
     productPrices.textContent = "No price found";
   } else {
     const list = document.createElement("ul");
@@ -109,6 +108,8 @@ function showProduct(product) {
   }
   productUrl.textContent = product.url || "-";
   productSource.textContent = product.source || "-";
+  productError.textContent = product.error || "-";
+  productError.hidden = !product.error;
 }
 
 // Keep the placeholder login state when the popup is closed and reopened.
@@ -150,6 +151,12 @@ document.querySelector("#add-product").addEventListener("click", async () => {
     status.textContent = "Product added to the universal cart.";
   } catch (error) {
     console.error("Could not scrape the product page:", error);
+    try {
+      const { lastProduct } = await storageGet("lastProduct");
+      showProduct(lastProduct);
+    } catch (storageError) {
+      console.error("Could not display the scraped product:", storageError);
+    }
     status.textContent = error.message || "Could not add this product.";
   }
 });

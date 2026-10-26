@@ -55,7 +55,16 @@ be running at `http://localhost:8080`; the extension posts this payload:
 
 The backend supplies `id` and `addedAt`. The extension uses the first detected
 price and sends an error instead of submitting when no valid price or currency
-is available.
+is available. It also performs a permissive product-page check using the page
+title and price plus at least one product signal, such as product structured
+data, product markup, a product image, or a product-like URL.
+
+If the backend is not running, the extension reports that it could not connect
+to `http://localhost:8080`. The backend must also implement `POST /api/items`;
+the current backend documentation lists that endpoint as planned.
+
+When adding fails after scraping, the popup still displays the scraped product
+details and shows the submission error below them.
 
 The same menu is available when right-clicking a link. It reads the current
 page and uses the selected link as the product URL. It does not open the link

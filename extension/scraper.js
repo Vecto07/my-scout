@@ -142,11 +142,20 @@
     : meta('meta[property="og:image"]') ||
       meta('meta[name="twitter:image"]') ||
       "";
+  const hasProductMarkup = Boolean(document.querySelector(
+    '[itemprop="price"], [itemprop="priceCurrency"], [itemtype*="Product"]'
+  ));
+  const hasProductUrl = /\/(?:dp|gp\/product|product|products|item|p)(?:\/|[-_])/i
+    .test(window.location.pathname);
+  const isLikelyProduct = !isDifferentSelectedLink &&
+    Boolean(name && prices.length &&
+      (jsonLdProducts.length || hasProductMarkup || absoluteImageUrl || hasProductUrl));
   const product = {
     url: selectedLink?.url || window.location.href,
     name: name || "Unknown product",
     prices,
     imageUrl: absoluteImageUrl,
+    isLikelyProduct,
     source: isDifferentSelectedLink
       ? "selected link only; open the link to read its product data"
       : prices.length

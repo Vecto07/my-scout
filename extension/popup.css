@@ -64,6 +64,10 @@ dd {
   margin: 2px 0 0;
 }
 
+#product-error {
+  color: #b3261e;
+}
+
 dd ul {
   margin: 0;
   padding-left: 18px;

@@ -81,9 +81,12 @@ async function scrapeTab(tabId, selectedLink) {
   });
 }
 
-async function saveError(message) {
+async function saveError(message, product) {
   await extensionApi.storage.local.set({
-    lastProduct: { error: message }
+    lastProduct: {
+      ...(product || {}),
+      error: message
+    }
   });
 }
 
@@ -126,6 +129,10 @@ function parsePrice(price) {
 }
 
 function toBackendItem(product) {
+  if (!product.isLikelyProduct) {
+    throw new Error("This page does not appear to be a product page.");
+  }
+
   const price = product.prices?.[0];
   if (!price) {
     throw new Error("No product price was found.");
@@ -156,29 +163,46 @@ function toBackendItem(product) {
 
 async function addToCart(product) {
   const item = toBackendItem(product);
-  const response = await fetch(`${apiBaseUrl}/api/items`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(item)
-  });
+  let response;
+  try {
+    response = await fetch(`${apiBaseUrl}/api/items`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(item)
+    });
+  } catch (error) {
+    console.error("Could not connect to the Universal Cart backend:", error);
+    throw new Error(
+      "Could not connect to the backend. Start it at http://localhost:8080 and try again."
+    );
+  }
   if (!response.ok) {
+    if (response.status === 404 || response.status === 405) {
+      throw new Error(
+        "The backend does not support adding products yet (POST /api/items)."
+      );
+    }
     throw new Error(`The backend rejected the product (${response.status}).`);
   }
   return item;
 }
 
 async function scrapeVisibleTab(tabId, selectedLink) {
+  let product;
   try {
-    const product = await scrapeTab(tabId, selectedLink);
+    product = await scrapeTab(tabId, selectedLink);
     const item = await addToCart(product);
     const savedProduct = { ...product, backendItem: item };
     await extensionApi.storage.local.set({ lastProduct: savedProduct });
     return savedProduct;
   } catch (error) {
     console.error("Could not read the visible product page:", error);
-    await saveError(error.message || "Could not read this page.");
+    await saveError(
+      error.message || "Could not read this page.",
+      product
+    );
     throw error;
   }
 }
