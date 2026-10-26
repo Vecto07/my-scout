@@ -135,10 +135,18 @@
   if (!isDifferentSelectedLink) {
     addPricesFromText(name, "price in product name");
   }
+  const image = pageProduct?.image;
+  const imageUrl = Array.isArray(image) ? image[0] : image;
+  const absoluteImageUrl = imageUrl
+    ? new URL(imageUrl, window.location.href).href
+    : meta('meta[property="og:image"]') ||
+      meta('meta[name="twitter:image"]') ||
+      "";
   const product = {
     url: selectedLink?.url || window.location.href,
     name: name || "Unknown product",
     prices,
+    imageUrl: absoluteImageUrl,
     source: isDifferentSelectedLink
       ? "selected link only; open the link to read its product data"
       : prices.length

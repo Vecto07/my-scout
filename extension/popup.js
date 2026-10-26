@@ -147,10 +147,10 @@ document.querySelector("#add-product").addEventListener("click", async () => {
       throw new Error(response?.error || "Could not read this page.");
     }
     showProduct(response.product);
-    status.textContent = "Product details gathered. All detected prices are shown.";
+    status.textContent = "Product added to the universal cart.";
   } catch (error) {
     console.error("Could not scrape the product page:", error);
-    status.textContent = "Could not read this product page.";
+    status.textContent = error.message || "Could not add this product.";
   }
 });
 

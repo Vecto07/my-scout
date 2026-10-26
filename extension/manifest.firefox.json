@@ -8,7 +8,8 @@
     "activeTab",
     "clipboardWrite",
     "storage",
-    "contextMenus"
+    "contextMenus",
+    "http://localhost:8080/*"
   ],
 
   "browser_action": {

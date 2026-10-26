@@ -2,8 +2,8 @@
 
 This is a small cross-browser WebExtension with a toolbar popup. It has a
 placeholder login form. Any non-empty credentials are accepted for now. After
-login, the **Add current page** button appears and reads the visible page.
-Later, it can send the result to the universal-cart website.
+login, the **Add current page** button reads the visible page and sends the
+item to the local backend.
 
 ## Files
 
@@ -15,8 +15,9 @@ Later, it can send the result to the universal-cart website.
 - `popup.css` styles the interface.
 - `popup.js` handles the placeholder login, login state, and current-page
   scraping. The demo login state is stored locally in the extension.
-- `background.js` adds the context-menu item, runs the scraper, and stores
-  scrape results.
+- `background.js` adds the context-menu item, runs the scraper, converts the
+  result to the backend item contract, sends it to `POST /api/items`, and
+  stores the result.
 - `scraper.js` reads product data from the current page. It tries JSON-LD
   first, then Open Graph/meta data and common visible elements. It also checks
   product names for embedded prices, uses Amazon's product title field, and
@@ -37,7 +38,24 @@ JSON does not support comments, so the explanatory comments are in
 
 After loading the extension, right-click a product page and select
 **Add product to Universal Cart**. Open the extension popup to see the last
-scraped name, price, currency, link, and extraction source.
+scraped name, price, currency, link, and extraction source. The backend must
+be running at `http://localhost:8080`; the extension posts this payload:
+
+```json
+{
+  "title": "Product name",
+  "price": 89.99,
+  "currency": "EUR",
+  "imageUrl": "https://example.com/image.jpg",
+  "shop": "example.com",
+  "url": "https://example.com/product",
+  "quantity": 1
+}
+```
+
+The backend supplies `id` and `addedAt`. The extension uses the first detected
+price and sends an error instead of submitting when no valid price or currency
+is available.
 
 The same menu is available when right-clicking a link. It reads the current
 page and uses the selected link as the product URL. It does not open the link

@@ -4,6 +4,7 @@ const extensionApi =
 
 const menuId = "add-product-to-cart";
 const scrapeCooldownMs = 5000;
+const apiBaseUrl = "http://localhost:8080";
 const lastScrapeByTab = new Map();
 
 function createContextMenu() {
@@ -86,11 +87,95 @@ async function saveError(message) {
   });
 }
 
+function currencyFromPrice(price) {
+  const value = `${price.value} ${price.currency || ""}`;
+  if (/\bEUR\b|€/i.test(value)) {
+    return "EUR";
+  }
+  if (/\bGBP\b|£/i.test(value)) {
+    return "GBP";
+  }
+  if (/\bUSD\b|\$/i.test(value)) {
+    return "USD";
+  }
+  return price.currency?.trim().toUpperCase() || "";
+}
+
+function parsePrice(price) {
+  const rawValue = String(price.value)
+    .replace(/[^\d,.-]/g, "")
+    .trim();
+  if (!rawValue) {
+    throw new Error("The product price is not a valid number.");
+  }
+
+  const lastComma = rawValue.lastIndexOf(",");
+  const lastDot = rawValue.lastIndexOf(".");
+  let normalized = rawValue;
+  if (lastComma > lastDot) {
+    normalized = rawValue.replace(/\./g, "").replace(",", ".");
+  } else {
+    normalized = rawValue.replace(/,/g, "");
+  }
+
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    throw new Error("The product price is not a valid number.");
+  }
+  return parsed;
+}
+
+function toBackendItem(product) {
+  const price = product.prices?.[0];
+  if (!price) {
+    throw new Error("No product price was found.");
+  }
+
+  let url;
+  try {
+    url = new URL(product.url);
+  } catch {
+    throw new Error("The product URL is not valid.");
+  }
+
+  const currency = currencyFromPrice(price);
+  if (!currency) {
+    throw new Error("The product currency could not be determined.");
+  }
+
+  return {
+    title: product.name?.trim() || "Unknown product",
+    price: parsePrice(price),
+    currency,
+    imageUrl: product.imageUrl || "",
+    shop: url.hostname,
+    url: url.href,
+    quantity: 1
+  };
+}
+
+async function addToCart(product) {
+  const item = toBackendItem(product);
+  const response = await fetch(`${apiBaseUrl}/api/items`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(item)
+  });
+  if (!response.ok) {
+    throw new Error(`The backend rejected the product (${response.status}).`);
+  }
+  return item;
+}
+
 async function scrapeVisibleTab(tabId, selectedLink) {
   try {
     const product = await scrapeTab(tabId, selectedLink);
-    await extensionApi.storage.local.set({ lastProduct: product });
-    return product;
+    const item = await addToCart(product);
+    const savedProduct = { ...product, backendItem: item };
+    await extensionApi.storage.local.set({ lastProduct: savedProduct });
+    return savedProduct;
   } catch (error) {
     console.error("Could not read the visible product page:", error);
     await saveError(error.message || "Could not read this page.");
