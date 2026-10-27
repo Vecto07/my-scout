@@ -11,6 +11,18 @@
   --font: "Segoe UI", Arial, sans-serif;
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #101b1d;
+  --surface: #101b1d;
+  --surface-subtle: #17272a;
+  --ink: #edf0e6;
+  --muted: #edf0e6;
+  --line: #edf0e6;
+  --accent: #d2e46c;
+  --danger: #d2e46c;
+}
+
 * {
   box-sizing: border-box;
   border-radius: 0 !important;
@@ -30,13 +42,61 @@ main {
   border-top: 4px solid var(--accent);
 }
 
+.popup-header {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
 h1 {
-  margin: 0 0 16px;
+  margin: 0;
   padding-bottom: 10px;
   border-bottom: 2px solid var(--ink);
   font-size: 19px;
   font-weight: 650;
   letter-spacing: -0.04em;
+}
+
+.theme-picker {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  width: fit-content;
+  padding: 2px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.theme-picker-label {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+}
+
+.theme-choice {
+  min-height: 25px;
+  width: auto;
+  margin: 0;
+  padding: 3px 7px;
+  border: 0;
+  border-bottom: 2px solid var(--surface);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 550;
+}
+
+.theme-choice:hover {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.theme-choice.is-active {
+  border-bottom-color: var(--accent);
+  color: var(--ink);
+  font-weight: 650;
 }
 
 h2 {
@@ -98,6 +158,11 @@ button {
 
 button:hover {
   background: #244a41;
+}
+
+:root[data-theme="dark"] button:hover {
+  background: #edf0e6;
+  color: #101b1d;
 }
 
 form + button,

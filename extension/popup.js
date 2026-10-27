@@ -13,6 +13,8 @@ const productSource = document.querySelector("#product-source");
 const productError = document.querySelector("#product-error");
 const devModeToggle = document.querySelector("#dev-mode");
 const productDetailsSection = document.querySelector("#product-details-section");
+const themeChoices = document.querySelectorAll(".theme-choice");
+const themeStorageKey = "theme";
 let devMode = false;
 const apiBaseUrl = "http://92.5.41.183:8080";
 
@@ -81,6 +83,38 @@ function sendRuntimeMessage(message) {
     });
   });
 }
+
+function setTheme(theme) {
+  const selectedTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = selectedTheme;
+  themeChoices.forEach((button) => {
+    const isSelected = button.dataset.theme === selectedTheme;
+    button.classList.toggle("is-active", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+}
+
+storageGet(themeStorageKey)
+  .then(({ [themeStorageKey]: storedTheme }) => {
+    setTheme(storedTheme);
+  })
+  .catch((error) => {
+    console.error("Could not read the theme preference:", error);
+    setTheme("light");
+  });
+
+themeChoices.forEach((button) => {
+  button.addEventListener("click", async () => {
+    const theme = button.dataset.theme;
+    setTheme(theme);
+    try {
+      await storageSet({ [themeStorageKey]: theme });
+    } catch (error) {
+      console.error("Could not save the theme preference:", error);
+      status.textContent = "Could not save the theme preference.";
+    }
+  });
+});
 
 function showLoggedIn() {
   loginSection.hidden = true;
