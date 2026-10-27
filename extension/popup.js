@@ -99,7 +99,7 @@ storageGet(themeStorageKey)
     setTheme(storedTheme);
   })
   .catch((error) => {
-    console.error("Could not read the theme preference:", error);
+    console.error("Darstellung konnte nicht gelesen werden:", error);
     setTheme("light");
   });
 
@@ -110,8 +110,8 @@ themeChoices.forEach((button) => {
     try {
       await storageSet({ [themeStorageKey]: theme });
     } catch (error) {
-      console.error("Could not save the theme preference:", error);
-      status.textContent = "Could not save the theme preference.";
+      console.error("Darstellung konnte nicht gespeichert werden:", error);
+      status.textContent = "Die Darstellung konnte nicht gespeichert werden.";
     }
   });
 });
@@ -143,10 +143,10 @@ function showProduct(product) {
     return;
   }
 
-  productName.textContent = product.name || "Unknown product";
+  productName.textContent = product.name || "Unbekanntes Produkt";
   productPrices.replaceChildren();
   if (!product.prices?.length) {
-    productPrices.textContent = "No price found";
+    productPrices.textContent = "Kein Preis gefunden";
   } else {
     const list = document.createElement("ul");
     for (const price of product.prices) {
@@ -174,8 +174,8 @@ storageGet(["loggedIn", "lastProduct", "devMode"])
     showProduct(lastProduct);
   })
   .catch((error) => {
-    console.error("Could not read login state:", error);
-    status.textContent = "Could not read the login state.";
+    console.error("Anmeldestatus konnte nicht gelesen werden:", error);
+    status.textContent = "Der Anmeldestatus konnte nicht gelesen werden.";
   });
 
 devModeToggle.addEventListener("change", async () => {
@@ -185,8 +185,8 @@ devModeToggle.addEventListener("change", async () => {
     const { lastProduct } = await storageGet("lastProduct");
     showProduct(lastProduct);
   } catch (error) {
-    console.error("Could not save developer mode:", error);
-    status.textContent = "Could not update developer mode.";
+    console.error("Entwicklermodus konnte nicht gespeichert werden:", error);
+    status.textContent = "Der Entwicklermodus konnte nicht aktualisiert werden.";
   }
 });
 
@@ -198,10 +198,10 @@ document.querySelector("#login-form").addEventListener("submit", async (event) =
     const token = await login(username, password);
     await storageSet({ loggedIn: true, jwtToken: token });
     showLoggedIn();
-    status.textContent = "Logged in. You can add products now.";
+    status.textContent = "Du bist angemeldet. Du kannst jetzt Produkte speichern.";
   } catch (error) {
-    console.error("Could not save login state:", error);
-    status.textContent = error.message || "Could not log in.";
+    console.error("Anmeldestatus konnte nicht gespeichert werden:", error);
+    status.textContent = error.message || "Die Anmeldung ist fehlgeschlagen.";
   }
 });
 
@@ -219,18 +219,18 @@ async function login(username, password) {
       })
     });
   } catch (error) {
-    console.error("Could not connect to the backend:", error);
-    throw new Error("Could not connect to the backend.");
+    console.error("Backend konnte nicht erreicht werden:", error);
+    throw new Error("Der Server konnte nicht erreicht werden.");
   }
 
   if (!response.ok) {
     const message = (await response.text()).trim();
-    throw new Error(message || "Login failed. Check your username and password.");
+    throw new Error(message || "Anmeldung fehlgeschlagen. Prüfe Benutzername und Passwort.");
   }
 
   const token = (await response.text()).trim();
   if (!token) {
-    throw new Error("Login failed because the backend returned no token.");
+    throw new Error("Anmeldung fehlgeschlagen, weil der Server kein gültiges Token zurückgegeben hat.");
   }
   return token;
 }
@@ -254,16 +254,16 @@ document.querySelector("#register-form").addEventListener("submit", async (event
     });
     if (!response.ok) {
       const message = (await response.text()).trim();
-      throw new Error(message || "Registration failed.");
+      throw new Error(message || "Die Registrierung ist fehlgeschlagen.");
     }
 
     const token = await login(username, password);
     await storageSet({ loggedIn: true, jwtToken: token });
     showLoggedIn();
-    status.textContent = "Account created. You are logged in.";
+    status.textContent = "Konto erstellt. Du bist angemeldet.";
   } catch (error) {
-    console.error("Could not register account:", error);
-    status.textContent = error.message || "Could not create the account.";
+    console.error("Konto konnte nicht erstellt werden:", error);
+    status.textContent = error.message || "Das Konto konnte nicht erstellt werden.";
   }
 });
 
@@ -279,26 +279,26 @@ document.querySelector("#show-login").addEventListener("click", () => {
 
 document.querySelector("#add-product").addEventListener("click", async () => {
   try {
-    status.textContent = "Reading product details...";
+    status.textContent = "Produktdetails werden gelesen...";
     const response = await sendRuntimeMessage({
       type: "scrapeCurrentPage"
     });
     if (!response?.ok) {
-      throw new Error(response?.error || "Could not read this page.");
+      throw new Error(response?.error || "Diese Seite konnte nicht gelesen werden.");
     }
     showProduct(response.product);
-    status.textContent = "Product added to the universal cart.";
+    status.textContent = "Produkt wurde in deiner Sammlung gespeichert.";
   } catch (error) {
-    console.error("Could not scrape the product page:", error);
+    console.error("Produktseite konnte nicht gelesen werden:", error);
     if (devMode) {
       try {
         const { lastProduct } = await storageGet("lastProduct");
         showProduct(lastProduct);
       } catch (storageError) {
-        console.error("Could not display the scraped product:", storageError);
+        console.error("Gefundenes Produkt konnte nicht angezeigt werden:", storageError);
       }
     }
-    status.textContent = "Product could not be added.";
+    status.textContent = "Das Produkt konnte nicht gespeichert werden.";
   }
 });
 
@@ -306,10 +306,10 @@ document.querySelector("#logout").addEventListener("click", () => {
   storageRemove(["loggedIn", "jwtToken"])
     .then(() => {
       showLoggedOut();
-      status.textContent = "Logged out.";
+      status.textContent = "Du bist abgemeldet.";
     })
     .catch((error) => {
-      console.error("Could not clear login state:", error);
-      status.textContent = "Could not log out.";
+      console.error("Anmeldestatus konnte nicht gelöscht werden:", error);
+      status.textContent = "Die Abmeldung ist fehlgeschlagen.";
     });
 });

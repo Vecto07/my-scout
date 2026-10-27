@@ -11,7 +11,7 @@ const lastScrapeByTab = new Map();
 function createContextMenu() {
   extensionApi.contextMenus.create({
     id: menuId,
-    title: "Read product on this page",
+    title: "Produkt auf dieser Seite lesen",
     contexts: ["page", "link"]
   });
 }
@@ -50,7 +50,7 @@ async function scrapeTab(tabId, selectedLink) {
   const now = Date.now();
   const lastScrape = lastScrapeByTab.get(tabId) || 0;
   if (now - lastScrape < scrapeCooldownMs) {
-    throw new Error("Please wait a few seconds before scraping again.");
+    throw new Error("Bitte warte ein paar Sekunden, bevor du es erneut versuchst.");
   }
   lastScrapeByTab.set(tabId, now);
 
@@ -58,7 +58,7 @@ async function scrapeTab(tabId, selectedLink) {
   return new Promise(async (resolve, reject) => {
     const timeout = setTimeout(() => {
       extensionApi.runtime.onMessage.removeListener(onMessage);
-      reject(new Error("The page did not return product data."));
+      reject(new Error("Die Seite hat keine Produktdaten zurückgegeben."));
     }, 10000);
 
     function onMessage(message) {
@@ -96,7 +96,7 @@ function parsePrice(price) {
     .replace(/[^\d,.-]/g, "")
     .trim();
   if (!rawValue) {
-    throw new Error("The product price is not a valid number.");
+    throw new Error("Der Produktpreis ist keine gültige Zahl.");
   }
 
   const lastComma = rawValue.lastIndexOf(",");
@@ -110,30 +110,30 @@ function parsePrice(price) {
 
   const parsed = Number(normalized);
   if (!Number.isFinite(parsed) || parsed < 0) {
-    throw new Error("The product price is not a valid number.");
+    throw new Error("Der Produktpreis ist keine gültige Zahl.");
   }
   return parsed;
 }
 
 function toBackendItem(product) {
   if (!product.isLikelyProduct) {
-    throw new Error("This page does not appear to be a product page.");
+    throw new Error("Diese Seite scheint keine Produktseite zu sein.");
   }
 
   const price = product.prices?.[0];
   if (!price) {
-    throw new Error("No product price was found.");
+    throw new Error("Es wurde kein Produktpreis gefunden.");
   }
 
   let url;
   try {
     url = new URL(product.url);
   } catch {
-    throw new Error("The product URL is not valid.");
+    throw new Error("Die Produktadresse ist ungültig.");
   }
 
   return {
-    name: product.name?.trim() || "Unknown product",
+    name: product.name?.trim() || "Unbekanntes Produkt",
     preis: parsePrice(price),
     shopName: url.hostname,
     url: url.href,
@@ -146,7 +146,7 @@ async function addToCart(product) {
   const { [tokenStorageKey]: token } =
     await extensionApi.storage.local.get(tokenStorageKey);
   if (!token) {
-    throw new Error("Please log in before adding products.");
+    throw new Error("Bitte melde dich an, bevor du Produkte speicherst.");
   }
 
   let response;
@@ -160,17 +160,17 @@ async function addToCart(product) {
       body: JSON.stringify(item)
     });
   } catch (error) {
-    console.error("Could not connect to the Universal Cart backend:", error);
+    console.error("Warenkorb-Server konnte nicht erreicht werden:", error);
     throw new Error(
-      "Could not connect to the backend. Check http://92.5.41.183:8080 and try again."
+      "Der Server konnte nicht erreicht werden. Prüfe http://92.5.41.183:8080 und versuche es erneut."
     );
   }
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
       await extensionApi.storage.local.remove(["loggedIn", tokenStorageKey]);
-      throw new Error("Your login has expired. Please log in again.");
+      throw new Error("Deine Anmeldung ist abgelaufen. Bitte melde dich erneut an.");
     }
-    throw new Error(`The backend rejected the product (${response.status}).`);
+    throw new Error(`Der Server hat das Produkt abgelehnt (${response.status}).`);
   }
   return item;
 }
@@ -184,9 +184,9 @@ async function scrapeVisibleTab(tabId, selectedLink) {
     await extensionApi.storage.local.set({ lastProduct: savedProduct });
     return savedProduct;
   } catch (error) {
-    console.error("Could not read the visible product page:", error);
+    console.error("Sichtbare Produktseite konnte nicht gelesen werden:", error);
     await saveError(
-      error.message || "Could not read this page.",
+      error.message || "Diese Seite konnte nicht gelesen werden.",
       product
     );
     throw error;
@@ -215,14 +215,14 @@ extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
   })
     .then(([tab]) => {
       if (!tab || tab.id === undefined) {
-        throw new Error("No active tab was found.");
+        throw new Error("Es wurde kein aktiver Tab gefunden.");
       }
       return scrapeVisibleTab(tab.id, null);
     })
     .then((product) => sendResponse({ ok: true, product }))
     .catch((error) => sendResponse({
       ok: false,
-      error: error.message || "Could not read this page."
+      error: error.message || "Diese Seite konnte nicht gelesen werden."
     }));
 
   // Keep the response channel open while the page is being injected.

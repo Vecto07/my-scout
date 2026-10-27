@@ -118,7 +118,7 @@
     ]) {
       const value = text(selector);
       addPrice(value, "", `visible selector: ${selector}`);
-      addPricesFromText(value, `price in selector: ${selector}`);
+      addPricesFromText(value, `Preis im Selektor: ${selector}`);
     }
   }
 
@@ -133,7 +133,7 @@
       document.title;
   // Some shops put the price directly in the product title or link text.
   if (!isDifferentSelectedLink) {
-    addPricesFromText(name, "price in product name");
+    addPricesFromText(name, "Preis im Produktnamen");
   }
   const image = pageProduct?.image;
   const imageUrl = Array.isArray(image) ? image[0] : image;
@@ -152,7 +152,7 @@
       (jsonLdProducts.length || hasProductMarkup || absoluteImageUrl || hasProductUrl));
   const product = {
     url: selectedLink?.url || window.location.href,
-    name: name || "Unknown product",
+    name: name || "Unbekanntes Produkt",
     prices,
     imageUrl: absoluteImageUrl,
     isLikelyProduct,
@@ -160,7 +160,7 @@
       ? "selected link only; open the link to read its product data"
       : prices.length
         ? "multiple methods"
-        : "no price found",
+        : "kein Preis gefunden",
     scrapedAt: new Date().toISOString()
   };
 

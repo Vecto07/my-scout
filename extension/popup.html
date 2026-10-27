@@ -1,81 +1,81 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Universal Cart</title>
+    <title>Warenkorb</title>
     <link rel="stylesheet" href="popup.css">
   </head>
   <body>
     <main>
       <header class="popup-header">
-        <h1>Universal Cart</h1>
-        <div class="theme-picker" role="group" aria-label="Choose appearance">
-          <span class="theme-picker-label">MODE</span>
+        <h1>Warenkorb.</h1>
+        <div class="theme-picker" role="group" aria-label="Darstellung auswählen">
+          <span class="theme-picker-label">MODUS</span>
           <button class="theme-choice is-active" type="button" data-theme="light" aria-pressed="true">Light</button>
           <button class="theme-choice" type="button" data-theme="dark" aria-pressed="false">Dark</button>
         </div>
       </header>
 
       <section id="login-section">
-        <h2>Login</h2>
+        <h2>Willkommen zurück.</h2>
         <form id="login-form">
           <label>
-            Username
-            <input id="username" type="text" autocomplete="username" required>
+            Benutzername
+            <input id="username" type="text" autocomplete="username" placeholder="Dein Benutzername" maxlength="100" required>
           </label>
           <label>
-            Password
-            <input id="password" type="password" autocomplete="current-password" required>
+            Passwort
+            <input id="password" type="password" autocomplete="current-password" placeholder="Mindestens 8 Zeichen" minlength="8" maxlength="128" required>
           </label>
-          <button type="submit">Log in</button>
+          <button type="submit">Anmelden</button>
         </form>
-        <button id="show-register" type="button">Create account</button>
+        <button id="show-register" type="button">Konto erstellen</button>
       </section>
 
       <section id="register-section" hidden>
-        <h2>Create account</h2>
+        <h2>Konto erstellen</h2>
         <form id="register-form">
           <label>
-            Username
-            <input id="register-username" type="text" autocomplete="username" required>
+            Benutzername
+            <input id="register-username" type="text" autocomplete="username" placeholder="Dein Benutzername" maxlength="100" required>
           </label>
           <label>
-            Email
-            <input id="register-email" type="email" autocomplete="email" required>
+            E-Mail-Adresse
+            <input id="register-email" type="email" autocomplete="email" placeholder="du@beispiel.de" required>
           </label>
           <label>
-            Password
-            <input id="register-password" type="password" autocomplete="new-password" required>
+            Passwort
+            <input id="register-password" type="password" autocomplete="new-password" placeholder="Mindestens 8 Zeichen" minlength="8" maxlength="128" required>
           </label>
-          <button type="submit">Register</button>
+          <button type="submit">Konto erstellen</button>
         </form>
-        <button id="show-login" type="button">Back to login</button>
+        <button id="show-login" type="button">Zurück zur Anmeldung</button>
       </section>
 
       <section id="cart-section" hidden>
-        <h2>Add product</h2>
-        <p>Save the current page to your universal cart.</p>
-        <button id="add-product" type="button">Add current page</button>
-        <button id="logout" type="button">Log out</button>
+        <h2>Neues Produkt hinzufügen</h2>
+        <p>Speichere die aktuelle Seite in deiner Sammlung.</p>
+        <button id="add-product" type="button">Produkt speichern</button>
+        <button id="logout" type="button">Abmelden</button>
 
         <label id="dev-mode-label">
           <input id="dev-mode" type="checkbox">
-          Developer mode
+          Entwicklermodus
         </label>
 
         <section id="product-details-section" hidden>
-          <h2>Last scraped product</h2>
+          <h2>Zuletzt gefundenes Produkt</h2>
           <dl id="product-details">
-            <dt>Name</dt>
-            <dd id="product-name">None yet</dd>
-            <dt>Prices found</dt>
-            <dd id="product-prices">None yet</dd>
+            <dt>Produkt</dt>
+            <dd id="product-name">Noch kein Produkt</dd>
+            <dt>Gefundene Preise</dt>
+            <dd id="product-prices">Noch keine Preise</dd>
             <dt>Link</dt>
             <dd id="product-url">-</dd>
-            <dt>Source</dt>
+            <dt>Quelle</dt>
             <dd id="product-source">-</dd>
-            <dt>Error</dt>
+            <dt>Fehler</dt>
             <dd id="product-error" hidden>-</dd>
           </dl>
         </section>
