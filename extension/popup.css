@@ -32,6 +32,17 @@ button {
   padding: 7px;
 }
 
+#dev-mode-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#dev-mode {
+  width: auto;
+  margin: 0;
+}
+
 button {
   cursor: pointer;
 }

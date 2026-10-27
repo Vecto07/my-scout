@@ -10,6 +10,9 @@ const productPrices = document.querySelector("#product-prices");
 const productUrl = document.querySelector("#product-url");
 const productSource = document.querySelector("#product-source");
 const productError = document.querySelector("#product-error");
+const devModeToggle = document.querySelector("#dev-mode");
+const productDetailsSection = document.querySelector("#product-details-section");
+let devMode = false;
 
 // Chrome and Firefox expose the same WebExtension APIs differently:
 // Firefox returns promises, while Chrome may require callbacks.
@@ -88,7 +91,8 @@ function showLoggedOut() {
 }
 
 function showProduct(product) {
-  if (!product) {
+  productDetailsSection.hidden = !devMode;
+  if (!devMode || !product) {
     return;
   }
 
@@ -113,8 +117,10 @@ function showProduct(product) {
 }
 
 // Keep the placeholder login state when the popup is closed and reopened.
-storageGet(["loggedIn", "lastProduct"])
-  .then(({ loggedIn, lastProduct }) => {
+storageGet(["loggedIn", "lastProduct", "devMode"])
+  .then(({ loggedIn, lastProduct, devMode: storedDevMode }) => {
+    devMode = storedDevMode === true;
+    devModeToggle.checked = devMode;
     if (loggedIn) {
       showLoggedIn();
     }
@@ -124,6 +130,18 @@ storageGet(["loggedIn", "lastProduct"])
     console.error("Could not read login state:", error);
     status.textContent = "Could not read the login state.";
   });
+
+devModeToggle.addEventListener("change", async () => {
+  devMode = devModeToggle.checked;
+  try {
+    await storageSet({ devMode });
+    const { lastProduct } = await storageGet("lastProduct");
+    showProduct(lastProduct);
+  } catch (error) {
+    console.error("Could not save developer mode:", error);
+    status.textContent = "Could not update developer mode.";
+  }
+});
 
 document.querySelector("#login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -151,13 +169,15 @@ document.querySelector("#add-product").addEventListener("click", async () => {
     status.textContent = "Product added to the universal cart.";
   } catch (error) {
     console.error("Could not scrape the product page:", error);
-    try {
-      const { lastProduct } = await storageGet("lastProduct");
-      showProduct(lastProduct);
-    } catch (storageError) {
-      console.error("Could not display the scraped product:", storageError);
+    if (devMode) {
+      try {
+        const { lastProduct } = await storageGet("lastProduct");
+        showProduct(lastProduct);
+      } catch (storageError) {
+        console.error("Could not display the scraped product:", storageError);
+      }
     }
-    status.textContent = error.message || "Could not add this product.";
+    status.textContent = "Product could not be added.";
   }
 });
 

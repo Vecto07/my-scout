@@ -66,6 +66,10 @@ the current backend documentation lists that endpoint as planned.
 When adding fails after scraping, the popup still displays the scraped product
 details and shows the submission error below them.
 
+Developer mode is disabled by default. Enable it in the popup to see scraped
+product details and diagnostic errors. With developer mode disabled, the popup
+only reports whether adding the product succeeded or failed.
+
 The same menu is available when right-clicking a link. It reads the current
 page and uses the selected link as the product URL. It does not open the link
 in a background tab, which avoids extra requests and reduces the chance of
