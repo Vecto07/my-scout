@@ -28,6 +28,8 @@ jobs:
 
       - name: GitHub Pages konfigurieren
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Frontend als Pages-Artefakt hochladen
         uses: actions/upload-pages-artifact@v3
