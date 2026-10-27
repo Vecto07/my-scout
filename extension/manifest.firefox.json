@@ -9,7 +9,7 @@
     "clipboardWrite",
     "storage",
     "contextMenus",
-    "http://localhost:8080/*"
+    "http://92.5.41.183:8080/*"
   ],
 
   "browser_action": {

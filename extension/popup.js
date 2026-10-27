@@ -4,6 +4,7 @@ const extensionApi =
 
 const status = document.querySelector("#status");
 const loginSection = document.querySelector("#login-section");
+const registerSection = document.querySelector("#register-section");
 const cartSection = document.querySelector("#cart-section");
 const productName = document.querySelector("#product-name");
 const productPrices = document.querySelector("#product-prices");
@@ -13,6 +14,7 @@ const productError = document.querySelector("#product-error");
 const devModeToggle = document.querySelector("#dev-mode");
 const productDetailsSection = document.querySelector("#product-details-section");
 let devMode = false;
+const apiBaseUrl = "http://92.5.41.183:8080";
 
 // Chrome and Firefox expose the same WebExtension APIs differently:
 // Firefox returns promises, while Chrome may require callbacks.
@@ -87,7 +89,18 @@ function showLoggedIn() {
 
 function showLoggedOut() {
   loginSection.hidden = false;
+  registerSection.hidden = true;
   cartSection.hidden = true;
+}
+
+function showLoginForm() {
+  loginSection.hidden = false;
+  registerSection.hidden = true;
+}
+
+function showRegisterForm() {
+  loginSection.hidden = true;
+  registerSection.hidden = false;
 }
 
 function showProduct(product) {
@@ -145,15 +158,89 @@ devModeToggle.addEventListener("change", async () => {
 
 document.querySelector("#login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  // For now, every non-empty email/username and password is accepted.
   try {
-    await storageSet({ loggedIn: true });
+    const username = document.querySelector("#username").value.trim();
+    const password = document.querySelector("#password").value;
+    const token = await login(username, password);
+    await storageSet({ loggedIn: true, jwtToken: token });
     showLoggedIn();
     status.textContent = "Logged in. You can add products now.";
   } catch (error) {
     console.error("Could not save login state:", error);
-    status.textContent = "Could not log in.";
+    status.textContent = error.message || "Could not log in.";
   }
+});
+
+async function login(username, password) {
+  let response;
+  try {
+    response = await fetch(`${apiBaseUrl}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        benutzername: username,
+        passwort: password
+      })
+    });
+  } catch (error) {
+    console.error("Could not connect to the backend:", error);
+    throw new Error("Could not connect to the backend.");
+  }
+
+  if (!response.ok) {
+    const message = (await response.text()).trim();
+    throw new Error(message || "Login failed. Check your username and password.");
+  }
+
+  const token = (await response.text()).trim();
+  if (!token) {
+    throw new Error("Login failed because the backend returned no token.");
+  }
+  return token;
+}
+
+document.querySelector("#register-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    const username = document.querySelector("#register-username").value.trim();
+    const email = document.querySelector("#register-email").value.trim();
+    const password = document.querySelector("#register-password").value;
+    const response = await fetch(`${apiBaseUrl}/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        benutzername: username,
+        email,
+        passwort: password
+      })
+    });
+    if (!response.ok) {
+      const message = (await response.text()).trim();
+      throw new Error(message || "Registration failed.");
+    }
+
+    const token = await login(username, password);
+    await storageSet({ loggedIn: true, jwtToken: token });
+    showLoggedIn();
+    status.textContent = "Account created. You are logged in.";
+  } catch (error) {
+    console.error("Could not register account:", error);
+    status.textContent = error.message || "Could not create the account.";
+  }
+});
+
+document.querySelector("#show-register").addEventListener("click", () => {
+  showRegisterForm();
+  status.textContent = "";
+});
+
+document.querySelector("#show-login").addEventListener("click", () => {
+  showLoginForm();
+  status.textContent = "";
 });
 
 document.querySelector("#add-product").addEventListener("click", async () => {
@@ -182,7 +269,7 @@ document.querySelector("#add-product").addEventListener("click", async () => {
 });
 
 document.querySelector("#logout").addEventListener("click", () => {
-  storageRemove("loggedIn")
+  storageRemove(["loggedIn", "jwtToken"])
     .then(() => {
       showLoggedOut();
       status.textContent = "Logged out.";

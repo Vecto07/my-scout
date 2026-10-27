@@ -16,7 +16,7 @@ item to the local backend.
 - `popup.js` handles the placeholder login, login state, and current-page
   scraping. The demo login state is stored locally in the extension.
 - `background.js` adds the context-menu item, runs the scraper, converts the
-  result to the backend item contract, sends it to `POST /api/items`, and
+  result to the backend article contract, sends it to `POST /api/artikel`, and
   stores the result.
 - `scraper.js` reads product data from the current page. It tries JSON-LD
   first, then Open Graph/meta data and common visible elements. It also checks
@@ -36,32 +36,34 @@ JSON does not support comments, so the explanatory comments are in
 5. Press the extension's toolbar button. If it is not visible, use the
    extensions menu to add it to the toolbar.
 
-After loading the extension, right-click a product page and select
-**Add product to Universal Cart**. Open the extension popup to see the last
-scraped name, price, currency, link, and extraction source. The backend must
-be running at `http://localhost:8080`; the extension posts this payload:
+After loading the extension, create an account or log in with the backend
+username and password. Registration calls `/api/auth/register` with
+`benutzername`, `email`, and `passwort`; after successful registration the
+extension logs in automatically. Then right-click a product page and select
+**Add product to Universal Cart**.
+The backend must be running at `http://92.5.41.183:8080`; the extension logs in
+at `/api/auth/login` and posts this payload to `/api/artikel`:
 
 ```json
 {
-  "title": "Product name",
-  "price": 89.99,
-  "currency": "EUR",
-  "imageUrl": "https://example.com/image.jpg",
-  "shop": "example.com",
+  "name": "Product name",
+  "preis": 89.99,
+  "shopName": "example.com",
   "url": "https://example.com/product",
-  "quantity": 1
+  "bildUrl": "https://example.com/image.jpg"
 }
 ```
 
-The backend supplies `id` and `addedAt`. The extension uses the first detected
-price and sends an error instead of submitting when no valid price or currency
-is available. It also performs a permissive product-page check using the page
+The JWT returned by login is stored locally and sent as a Bearer token. The
+backend supplies the article ID. The extension uses the first detected price
+and sends an error instead of submitting when no valid price or currency is
+available. It also performs a permissive product-page check using the page
 title and price plus at least one product signal, such as product structured
 data, product markup, a product image, or a product-like URL.
 
 If the backend is not running, the extension reports that it could not connect
-to `http://localhost:8080`. The backend must also implement `POST /api/items`;
-the current backend documentation lists that endpoint as planned.
+to `http://92.5.41.183:8080`. A valid backend login is required before adding
+products.
 
 When adding fails after scraping, the popup still displays the scraped product
 details and shows the submission error below them.

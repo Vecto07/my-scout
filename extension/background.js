@@ -4,7 +4,8 @@ const extensionApi =
 
 const menuId = "add-product-to-cart";
 const scrapeCooldownMs = 5000;
-const apiBaseUrl = "http://localhost:8080";
+const apiBaseUrl = "http://92.5.41.183:8080";
+const tokenStorageKey = "jwtToken";
 const lastScrapeByTab = new Map();
 
 function createContextMenu() {
@@ -90,20 +91,6 @@ async function saveError(message, product) {
   });
 }
 
-function currencyFromPrice(price) {
-  const value = `${price.value} ${price.currency || ""}`;
-  if (/\bEUR\b|€/i.test(value)) {
-    return "EUR";
-  }
-  if (/\bGBP\b|£/i.test(value)) {
-    return "GBP";
-  }
-  if (/\bUSD\b|\$/i.test(value)) {
-    return "USD";
-  }
-  return price.currency?.trim().toUpperCase() || "";
-}
-
 function parsePrice(price) {
   const rawValue = String(price.value)
     .replace(/[^\d,.-]/g, "")
@@ -145,44 +132,43 @@ function toBackendItem(product) {
     throw new Error("The product URL is not valid.");
   }
 
-  const currency = currencyFromPrice(price);
-  if (!currency) {
-    throw new Error("The product currency could not be determined.");
-  }
-
   return {
-    title: product.name?.trim() || "Unknown product",
-    price: parsePrice(price),
-    currency,
-    imageUrl: product.imageUrl || "",
-    shop: url.hostname,
+    name: product.name?.trim() || "Unknown product",
+    preis: parsePrice(price),
+    shopName: url.hostname,
     url: url.href,
-    quantity: 1
+    bildUrl: product.imageUrl || ""
   };
 }
 
 async function addToCart(product) {
   const item = toBackendItem(product);
+  const { [tokenStorageKey]: token } =
+    await extensionApi.storage.local.get(tokenStorageKey);
+  if (!token) {
+    throw new Error("Please log in before adding products.");
+  }
+
   let response;
   try {
-    response = await fetch(`${apiBaseUrl}/api/items`, {
+    response = await fetch(`${apiBaseUrl}/api/artikel`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(item)
     });
   } catch (error) {
     console.error("Could not connect to the Universal Cart backend:", error);
     throw new Error(
-      "Could not connect to the backend. Start it at http://localhost:8080 and try again."
+      "Could not connect to the backend. Check http://92.5.41.183:8080 and try again."
     );
   }
   if (!response.ok) {
-    if (response.status === 404 || response.status === 405) {
-      throw new Error(
-        "The backend does not support adding products yet (POST /api/items)."
-      );
+    if (response.status === 401 || response.status === 403) {
+      await extensionApi.storage.local.remove(["loggedIn", tokenStorageKey]);
+      throw new Error("Your login has expired. Please log in again.");
     }
     throw new Error(`The backend rejected the product (${response.status}).`);
   }

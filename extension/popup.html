@@ -12,11 +12,10 @@
 
       <section id="login-section">
         <h2>Login</h2>
-        <!-- Placeholder only: any non-empty credentials are accepted. -->
         <form id="login-form">
           <label>
-            Email or username
-            <input id="email" type="text" autocomplete="username" required>
+            Username
+            <input id="username" type="text" autocomplete="username" required>
           </label>
           <label>
             Password
@@ -24,6 +23,27 @@
           </label>
           <button type="submit">Log in</button>
         </form>
+        <button id="show-register" type="button">Create account</button>
+      </section>
+
+      <section id="register-section" hidden>
+        <h2>Create account</h2>
+        <form id="register-form">
+          <label>
+            Username
+            <input id="register-username" type="text" autocomplete="username" required>
+          </label>
+          <label>
+            Email
+            <input id="register-email" type="email" autocomplete="email" required>
+          </label>
+          <label>
+            Password
+            <input id="register-password" type="password" autocomplete="new-password" required>
+          </label>
+          <button type="submit">Register</button>
+        </form>
+        <button id="show-login" type="button">Back to login</button>
       </section>
 
       <section id="cart-section" hidden>
