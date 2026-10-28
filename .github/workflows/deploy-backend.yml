@@ -33,9 +33,7 @@ jobs:
 
       - name: Backend bauen
         working-directory: backend
-        run: |
-          chmod +x mvnw
-          ./mvnw -B package -DskipTests
+        run: bash mvnw -B package -DskipTests
 
       - name: SSH-Schlüssel einrichten
         env:
