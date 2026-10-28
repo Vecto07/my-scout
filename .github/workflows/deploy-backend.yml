@@ -1,0 +1,63 @@
+name: Backend auf Oracle VPS deployen
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-deployment
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Java 21 einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Backend bauen
+        working-directory: backend
+        run: ./mvnw -B package -DskipTests
+
+      - name: SSH-Schlüssel einrichten
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/deploy_key"
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/deploy_key" "$HOME/.ssh/known_hosts"
+
+      - name: JAR auf VPS kopieren
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          scp -i "$HOME/.ssh/deploy_key" \
+            backend/target/backend-0.0.1-SNAPSHOT.jar \
+            "$VPS_USER@$VPS_HOST:/tmp/universal-cart-backend.jar"
+
+      - name: Backend neu starten
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh -i "$HOME/.ssh/deploy_key" "$VPS_USER@$VPS_HOST" \
+            "sudo install -o universal-cart -g universal-cart -m 0644 /tmp/universal-cart-backend.jar /opt/universal-cart/backend.jar && sudo systemctl restart universal-cart && sudo systemctl is-active --quiet universal-cart"

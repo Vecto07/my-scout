@@ -16,7 +16,7 @@ const productDetailsSection = document.querySelector("#product-details-section")
 const themeChoices = document.querySelectorAll(".theme-choice");
 const themeStorageKey = "theme";
 let devMode = false;
-const apiBaseUrl = "http://92.5.41.183:8080";
+const apiBaseUrl = "https://warenkorb.duckdns.org";
 
 // Chrome and Firefox expose the same WebExtension APIs differently:
 // Firefox returns promises, while Chrome may require callbacks.

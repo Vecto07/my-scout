@@ -4,7 +4,7 @@ const extensionApi =
 
 const menuId = "add-product-to-cart";
 const scrapeCooldownMs = 5000;
-const apiBaseUrl = "http://92.5.41.183:8080";
+const apiBaseUrl = "https://warenkorb.duckdns.org";
 const tokenStorageKey = "jwtToken";
 const lastScrapeByTab = new Map();
 
@@ -162,7 +162,7 @@ async function addToCart(product) {
   } catch (error) {
     console.error("Warenkorb-Server konnte nicht erreicht werden:", error);
     throw new Error(
-      "Der Server konnte nicht erreicht werden. Prüfe http://92.5.41.183:8080 und versuche es erneut."
+      "Der Server konnte nicht erreicht werden. Prüfe https://warenkorb.duckdns.org und versuche es erneut."
     );
   }
   if (!response.ok) {

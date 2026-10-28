@@ -13,7 +13,7 @@
   ],
 
   "host_permissions": [
-    "http://92.5.41.183:8080/*"
+    "https://warenkorb.duckdns.org/*"
   ],
 
   "action": {
