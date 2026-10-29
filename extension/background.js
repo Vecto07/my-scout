@@ -141,10 +141,11 @@ function toBackendItem(product) {
   };
 }
 
-async function addToCart(product) {
+async function addToCart(product, tokenOverride) {
   const item = toBackendItem(product);
-  const { [tokenStorageKey]: token } =
+  const { [tokenStorageKey]: storedToken } =
     await extensionApi.storage.local.get(tokenStorageKey);
+  const token = tokenOverride || storedToken;
   if (!token) {
     throw new Error("Bitte melde dich an, bevor du Produkte speicherst.");
   }
@@ -175,11 +176,11 @@ async function addToCart(product) {
   return item;
 }
 
-async function scrapeVisibleTab(tabId, selectedLink) {
+async function scrapeVisibleTab(tabId, selectedLink, tokenOverride) {
   let product;
   try {
     product = await scrapeTab(tabId, selectedLink);
-    const item = await addToCart(product);
+    const item = await addToCart(product, tokenOverride);
     const savedProduct = { ...product, backendItem: item };
     await extensionApi.storage.local.set({ lastProduct: savedProduct });
     return savedProduct;
@@ -217,7 +218,7 @@ extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (!tab || tab.id === undefined) {
         throw new Error("Es wurde kein aktiver Tab gefunden.");
       }
-      return scrapeVisibleTab(tab.id, null);
+      return scrapeVisibleTab(tab.id, null, message.jwtToken);
     })
     .then((product) => sendResponse({ ok: true, product }))
     .catch((error) => sendResponse({

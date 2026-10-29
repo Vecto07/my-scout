@@ -163,13 +163,16 @@ function showProduct(product) {
   productError.hidden = !product.error;
 }
 
-// Keep the placeholder login state when the popup is closed and reopened.
-storageGet(["loggedIn", "lastProduct", "devMode"])
-  .then(({ loggedIn, lastProduct, devMode: storedDevMode }) => {
+// Keep the login state and token consistent when the popup is closed and reopened.
+storageGet(["loggedIn", "jwtToken", "lastProduct", "devMode"])
+  .then(async ({ loggedIn, jwtToken, lastProduct, devMode: storedDevMode }) => {
     devMode = storedDevMode === true;
     devModeToggle.checked = devMode;
-    if (loggedIn) {
+    if (loggedIn && typeof jwtToken === "string" && jwtToken.trim()) {
       showLoggedIn();
+    } else {
+      await storageRemove(["loggedIn", "jwtToken"]);
+      showLoggedOut();
     }
     showProduct(lastProduct);
   })
@@ -280,8 +283,14 @@ document.querySelector("#show-login").addEventListener("click", () => {
 document.querySelector("#add-product").addEventListener("click", async () => {
   try {
     status.textContent = "Produktdetails werden gelesen...";
+    const { jwtToken } = await storageGet("jwtToken");
+    if (typeof jwtToken !== "string" || !jwtToken.trim()) {
+      showLoggedOut();
+      throw new Error("Bitte melde dich an, bevor du Produkte speicherst.");
+    }
     const response = await sendRuntimeMessage({
-      type: "scrapeCurrentPage"
+      type: "scrapeCurrentPage",
+      jwtToken
     });
     if (!response?.ok) {
       throw new Error(response?.error || "Diese Seite konnte nicht gelesen werden.");
