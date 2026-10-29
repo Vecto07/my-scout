@@ -2,13 +2,15 @@ name: Extension veröffentlichen
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
+    paths:
+      - "extension/**"
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag, zum Beispiel v1.0.0"
-        required: true
+        description: "Optionaler Release-Tag, zum Beispiel v1.0.1 (leer = Patch-Version erhöhen)"
+        required: false
         type: string
 
 permissions:
@@ -16,13 +18,16 @@ permissions:
 
 jobs:
   release:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
       - name: Repository auschecken
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Release-Tag bestimmen
+      - name: Version erhöhen und Release-Tag bestimmen
         id: release
         env:
           DISPATCH_TAG: ${{ inputs.tag }}
@@ -30,7 +35,20 @@ jobs:
           if [ -n "$DISPATCH_TAG" ]; then
             tag="$DISPATCH_TAG"
           else
-            tag="$GITHUB_REF_NAME"
+            current_version=$(jq -r '.version' extension/manifest.json)
+            if ! [[ "$current_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Ungültige Extension-Version: $current_version" >&2
+              exit 1
+            fi
+            IFS=. read -r major minor patch <<< "$current_version"
+            next_version="$major.$minor.$((patch + 1))"
+            jq --arg version "$next_version" '.version = $version' \
+              extension/manifest.json > extension/manifest.json.tmp
+            mv extension/manifest.json.tmp extension/manifest.json
+            jq --arg version "$next_version" '.version = $version' \
+              extension/manifest.firefox.json > extension/manifest.firefox.json.tmp
+            mv extension/manifest.firefox.json.tmp extension/manifest.firefox.json
+            tag="v$next_version"
           fi
 
           case "$tag" in
@@ -38,7 +56,22 @@ jobs:
             *) echo "Release-Tag muss mit v beginnen: $tag" >&2; exit 1 ;;
           esac
 
+          if git rev-parse "$tag" >/dev/null 2>&1; then
+            echo "Der Release-Tag existiert bereits: $tag" >&2
+            exit 1
+          fi
+
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Versionsänderung veröffentlichen
+        if: inputs.tag == ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add extension/manifest.json extension/manifest.firefox.json
+          git commit -m "Bump extension version to ${{ steps.release.outputs.tag }} [skip ci]"
+          git tag -a "${{ steps.release.outputs.tag }}" -m "Release ${{ steps.release.outputs.tag }}"
+          git push origin HEAD:main --follow-tags
 
       - name: Erweiterung für Chrome paketieren
         env:

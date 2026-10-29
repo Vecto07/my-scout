@@ -97,11 +97,12 @@ is needed for permanent installation.
 
 ## Create a GitHub release
 
-Push a version tag such as `v1.0.0` to run
-`.github/workflows/release-extension.yml`. The workflow creates a GitHub
-Release with `universal-cart-chrome-<tag>.zip` and
-`universal-cart-firefox-<tag>.xpi`. The same workflow can be started manually
-from the Actions tab by supplying the release tag.
+Every push to `main` that changes `extension/**` automatically increments the
+patch version in both manifests, creates a `v<version>` tag, and publishes a
+GitHub Release. The release contains
+`universal-cart-chrome-<tag>.zip` and `universal-cart-firefox-<tag>.xpi`.
+The workflow can also be started manually from the Actions tab. Leave the tag
+empty to increment the patch version, or provide an explicit `vX.Y.Z` tag.
 
 ## Official references
 
