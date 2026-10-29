@@ -19,6 +19,16 @@ Dafür werden diese GitHub-Repository-Secrets benötigt:
 - `VPS_SSH_KEY`: privater SSH-Schlüssel
 - `VPS_KNOWN_HOSTS`: Ausgabe von `ssh-keyscan -H <VPS_HOST>`
 
+Wenn der Workflow mit `VPS_KNOWN_HOSTS enthält keinen Host-Key` abbricht,
+ersetze den Secret-Wert durch die aktuelle Ausgabe von:
+
+```bash
+ssh-keyscan -H <VPS_HOST>
+```
+
+`VPS_HOST` darf dabei nur den Hostnamen oder die IP-Adresse enthalten, ohne
+`https://`, Port oder Pfad.
+
 Einmalig auf dem VPS vorbereiten:
 
 ```bash
