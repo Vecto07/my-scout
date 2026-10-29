@@ -1,9 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Universal Cart",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Save products to a future universal cart.",
-
   "permissions": [
     "activeTab",
     "clipboardWrite",
@@ -11,16 +10,13 @@
     "contextMenus",
     "scripting"
   ],
-
   "host_permissions": [
     "https://warenkorb.duckdns.org/*"
   ],
-
   "action": {
     "default_title": "Universal Cart",
     "default_popup": "popup.html"
   },
-
   "background": {
     "service_worker": "background.js"
   }
