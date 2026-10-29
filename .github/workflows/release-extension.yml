@@ -1,0 +1,79 @@
+name: Extension veröffentlichen
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, zum Beispiel v1.0.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Release-Tag bestimmen
+        id: release
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          if [ -n "$DISPATCH_TAG" ]; then
+            tag="$DISPATCH_TAG"
+          else
+            tag="$GITHUB_REF_NAME"
+          fi
+
+          case "$tag" in
+            v*) ;;
+            *) echo "Release-Tag muss mit v beginnen: $tag" >&2; exit 1 ;;
+          esac
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Erweiterung für Chrome paketieren
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          mkdir -p build/chrome dist
+          cp -R extension/. build/chrome/
+          rm build/chrome/manifest.firefox.json
+          (
+            cd build/chrome
+            zip -qr "../../dist/universal-cart-chrome-${TAG}.zip" .
+          )
+
+      - name: Firefox-Paket erstellen
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          mkdir -p build/firefox dist/firefox
+          cp -R extension/. build/firefox/
+          mv build/firefox/manifest.firefox.json build/firefox/manifest.json
+          npx --yes web-ext build \
+            --source-dir build/firefox \
+            --artifacts-dir dist/firefox \
+            --filename "universal-cart-firefox-${TAG}.xpi" \
+            --overwrite-dest
+          mv "dist/firefox/universal-cart-firefox-${TAG}.xpi" \
+            "dist/universal-cart-firefox-${TAG}.xpi"
+
+      - name: GitHub Release erstellen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          gh release create "$TAG" \
+            "dist/universal-cart-chrome-${TAG}.zip" \
+            "dist/universal-cart-firefox-${TAG}.xpi" \
+            --title "Universal Cart ${TAG}" \
+            --generate-notes

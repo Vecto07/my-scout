@@ -95,6 +95,14 @@ scrapes in the same tab and stops when the page does not allow access.
 Temporary add-ons are removed when Firefox restarts. A signed, packaged add-on
 is needed for permanent installation.
 
+## Create a GitHub release
+
+Push a version tag such as `v1.0.0` to run
+`.github/workflows/release-extension.yml`. The workflow creates a GitHub
+Release with `universal-cart-chrome-<tag>.zip` and
+`universal-cart-firefox-<tag>.xpi`. The same workflow can be started manually
+from the Actions tab by supplying the release tag.
+
 ## Official references
 
 - [Chrome action](https://developer.chrome.com/docs/extensions/reference/api/action)
