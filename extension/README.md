@@ -61,6 +61,13 @@ available. It also performs a permissive product-page check using the page
 title and price plus at least one product signal, such as product structured
 data, product markup, a product image, or a product-like URL.
 
+The scraper checks JSON-LD, Open Graph and schema.org data, common Amazon,
+Apple and Shopify price selectors, product state embedded in scripts, and
+visible price elements. Product images are collected from JSON-LD, Open Graph,
+Twitter cards, normal images, lazy-loaded image attributes and `srcset`.
+When the popup cannot find a price, it keeps the scraped product and shows a
+manual price field so the product can still be saved.
+
 If the backend is not running, the extension reports that it could not connect
 to `https://api.my-scout.app`. A valid backend login is required before adding
 products.

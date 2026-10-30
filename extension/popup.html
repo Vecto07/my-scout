@@ -57,6 +57,12 @@
         <h2>Neues Produkt hinzufügen</h2>
         <p>Speichere die aktuelle Seite in deiner Sammlung.</p>
         <button id="add-product" type="button">Produkt speichern</button>
+        <form id="manual-price-form" hidden>
+          <label for="manual-price">Preis manuell eingeben
+            <input id="manual-price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="z. B. 1299,00">
+          </label>
+          <button type="submit">Mit diesem Preis speichern</button>
+        </form>
         <button id="logout" type="button">Abmelden</button>
 
         <label id="dev-mode-label">
@@ -73,6 +79,8 @@
             <dd id="product-prices">Noch keine Preise</dd>
             <dt>Link</dt>
             <dd id="product-url">-</dd>
+            <dt>Bild</dt>
+            <dd id="product-image">-</dd>
             <dt>Quelle</dt>
             <dd id="product-source">-</dd>
             <dt>Fehler</dt>

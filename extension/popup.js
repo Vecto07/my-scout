@@ -9,8 +9,11 @@ const cartSection = document.querySelector("#cart-section");
 const productName = document.querySelector("#product-name");
 const productPrices = document.querySelector("#product-prices");
 const productUrl = document.querySelector("#product-url");
+const productImage = document.querySelector("#product-image");
 const productSource = document.querySelector("#product-source");
 const productError = document.querySelector("#product-error");
+const manualPriceForm = document.querySelector("#manual-price-form");
+const manualPriceInput = document.querySelector("#manual-price");
 const devModeToggle = document.querySelector("#dev-mode");
 const productDetailsSection = document.querySelector("#product-details-section");
 const themeChoices = document.querySelectorAll(".theme-choice");
@@ -139,6 +142,7 @@ function showRegisterForm() {
 
 function showProduct(product) {
   productDetailsSection.hidden = !devMode;
+  manualPriceForm.hidden = Boolean(product?.prices?.length);
   if (!devMode || !product) {
     return;
   }
@@ -158,6 +162,7 @@ function showProduct(product) {
     productPrices.appendChild(list);
   }
   productUrl.textContent = product.url || "-";
+  productImage.textContent = product.imageUrl || "Kein Bild gefunden";
   productSource.textContent = product.source || "-";
   productError.textContent = product.error || "-";
   productError.hidden = !product.error;
@@ -288,14 +293,28 @@ document.querySelector("#add-product").addEventListener("click", async () => {
       showLoggedOut();
       throw new Error("Bitte melde dich an, bevor du Produkte speicherst.");
     }
-    const response = await sendRuntimeMessage({
+    const scrapedResponse = await sendRuntimeMessage({
       type: "scrapeCurrentPage",
       jwtToken
     });
-    if (!response?.ok) {
-      throw new Error(response?.error || "Diese Seite konnte nicht gelesen werden.");
+    if (!scrapedResponse?.ok) {
+      throw new Error(scrapedResponse?.error || "Diese Seite konnte nicht gelesen werden.");
     }
-    showProduct(response.product);
+    await storageSet({ lastProduct: scrapedResponse.product });
+    showProduct(scrapedResponse.product);
+    if (!scrapedResponse.product?.prices?.length) {
+      status.textContent = "Kein Preis erkannt. Bitte gib den Preis manuell ein.";
+      manualPriceInput.focus();
+      return;
+    }
+    const saveResponse = await sendRuntimeMessage({
+      type: "saveProduct",
+      product: scrapedResponse.product,
+      jwtToken
+    });
+    if (!saveResponse?.ok) {
+      throw new Error(saveResponse?.error || "Das Produkt konnte nicht gespeichert werden.");
+    }
     status.textContent = "Produkt wurde in deiner Sammlung gespeichert.";
   } catch (error) {
     console.error("Produktseite konnte nicht gelesen werden:", error);
@@ -308,6 +327,37 @@ document.querySelector("#add-product").addEventListener("click", async () => {
       }
     }
     status.textContent = "Das Produkt konnte nicht gespeichert werden.";
+  }
+});
+
+manualPriceForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const manualPrice = manualPriceInput.value.trim();
+  if (!manualPrice) {
+    status.textContent = "Bitte gib einen Preis ein.";
+    manualPriceInput.focus();
+    return;
+  }
+  try {
+    const { jwtToken, lastProduct } = await storageGet(["jwtToken", "lastProduct"]);
+    if (!lastProduct) {
+      throw new Error("Lies zuerst eine Produktseite ein.");
+    }
+    status.textContent = "Produkt wird gespeichert...";
+    const response = await sendRuntimeMessage({
+      type: "saveProduct",
+      product: lastProduct,
+      manualPrice,
+      jwtToken
+    });
+    if (!response?.ok) {
+      throw new Error(response?.error || "Das Produkt konnte nicht gespeichert werden.");
+    }
+    manualPriceForm.hidden = true;
+    status.textContent = "Produkt wurde mit dem manuellen Preis gespeichert.";
+  } catch (error) {
+    console.error("Produkt mit manuellem Preis konnte nicht gespeichert werden:", error);
+    status.textContent = error.message || "Das Produkt konnte nicht gespeichert werden.";
   }
 });
 

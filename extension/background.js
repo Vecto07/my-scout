@@ -116,7 +116,7 @@ function parsePrice(price) {
 }
 
 function toBackendItem(product) {
-  if (!product.isLikelyProduct) {
+  if (!product?.isLikelyProduct) {
     throw new Error("Diese Seite scheint keine Produktseite zu sein.");
   }
 
@@ -141,8 +141,18 @@ function toBackendItem(product) {
   };
 }
 
-async function addToCart(product, tokenOverride) {
-  const item = toBackendItem(product);
+function toBackendItemWithManualPrice(product, manualPrice) {
+  if (!manualPrice || !String(manualPrice).trim()) {
+    return toBackendItem(product);
+  }
+  return toBackendItem({
+    ...product,
+    prices: [{ value: manualPrice, currency: "", source: "manuell eingegeben" }]
+  });
+}
+
+async function addToCart(product, tokenOverride, manualPrice) {
+  const item = toBackendItemWithManualPrice(product, manualPrice);
   const { [tokenStorageKey]: storedToken } =
     await extensionApi.storage.local.get(tokenStorageKey);
   const token = tokenOverride || storedToken;
@@ -180,10 +190,7 @@ async function scrapeVisibleTab(tabId, selectedLink, tokenOverride) {
   let product;
   try {
     product = await scrapeTab(tabId, selectedLink);
-    const item = await addToCart(product, tokenOverride);
-    const savedProduct = { ...product, backendItem: item };
-    await extensionApi.storage.local.set({ lastProduct: savedProduct });
-    return savedProduct;
+    return await saveScrapedProduct(product, tokenOverride);
   } catch (error) {
     console.error("Sichtbare Produktseite konnte nicht gelesen werden:", error);
     await saveError(
@@ -205,6 +212,13 @@ extensionApi.contextMenus.onClicked.addListener((info, tab) => {
   scrapeVisibleTab(tab.id, selectedLink).catch(() => {});
 });
 
+async function saveScrapedProduct(product, tokenOverride, manualPrice) {
+  const item = await addToCart(product, tokenOverride, manualPrice);
+  const savedProduct = { ...product, backendItem: item };
+  await extensionApi.storage.local.set({ lastProduct: savedProduct });
+  return savedProduct;
+}
+
 extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type !== "scrapeCurrentPage") {
     return;
@@ -218,7 +232,7 @@ extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (!tab || tab.id === undefined) {
         throw new Error("Es wurde kein aktiver Tab gefunden.");
       }
-      return scrapeVisibleTab(tab.id, null, message.jwtToken);
+      return scrapeTab(tab.id, null);
     })
     .then((product) => sendResponse({ ok: true, product }))
     .catch((error) => sendResponse({
@@ -227,5 +241,18 @@ extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }));
 
   // Keep the response channel open while the page is being injected.
+  return true;
+});
+
+extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type !== "saveProduct") {
+    return;
+  }
+  saveScrapedProduct(message.product, message.jwtToken, message.manualPrice)
+    .then((product) => sendResponse({ ok: true, product }))
+    .catch((error) => sendResponse({
+      ok: false,
+      error: error.message || "Das Produkt konnte nicht gespeichert werden."
+    }));
   return true;
 });

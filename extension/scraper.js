@@ -40,7 +40,8 @@
     selectedLink?.url && selectedLink.url !== window.location.href
   );
   const prices = [];
-  const pricePattern = /(?:€|EUR|£|GBP|\$|USD)\s*\d[\d.,]*|\d[\d.,]*\s*(?:€|EUR|£|GBP|\$|USD)/gi;
+  const pricePattern = /(?:€|EUR|£|GBP|\$|USD|CHF|CAD|AUD)\s*\d[\d.,\s]*|\d[\d.,\s]*\s*(?:€|EUR|£|GBP|\$|USD|CHF|CAD|AUD)/gi;
+  const numberPricePattern = /(?:price|preis|amount|cost|value|from|ab)[^\d]{0,20}(\d{1,6}(?:[.,]\d{1,2})?)/i;
 
   function addPrice(value, currency, source) {
     if (value === undefined || value === null || String(value).trim() === "") {
@@ -63,6 +64,23 @@
   function addPricesFromText(value, source) {
     if (!value) {
       return;
+    }
+
+    function addPriceFromElement(element, source) {
+      if (!element) {
+        return;
+      }
+      const value = element.getAttribute("content") ||
+        element.getAttribute("data-price") ||
+        element.getAttribute("data-product-price") ||
+        element.textContent;
+      addPricesFromText(value, source);
+      if (!prices.length && value) {
+        const match = String(value).match(numberPricePattern);
+        if (match) {
+          addPrice(match[1], "", `${source} (ohne Währung)`);
+        }
+      }
     }
 
     for (const match of String(value).match(pricePattern) || []) {
@@ -113,12 +131,33 @@
       ".price__sale",
       ".product-price",
       ".product__price",
+      ".rf-price",
+      ".as-price-current",
+      "[data-autom='productPrice']",
+      "[data-autom='price']",
+      "[data-testid*='price' i]",
+      "[class*='price' i]",
+      "[id*='price' i]",
       "[data-product-price]",
       "[data-price]"
     ]) {
-      const value = text(selector);
-      addPrice(value, "", `visible selector: ${selector}`);
-      addPricesFromText(value, `Preis im Selektor: ${selector}`);
+      for (const element of [...document.querySelectorAll(selector)].slice(0, 8)) {
+        addPriceFromElement(element, `Preis im Selektor: ${selector}`);
+      }
+    }
+
+    for (const script of document.querySelectorAll(
+      'script:not([src]), [data-state], [data-product], [data-product-json]'
+    )) {
+      const value = script.textContent || script.getAttribute("data-state") ||
+        script.getAttribute("data-product") || script.getAttribute("data-product-json");
+      if (value && /price|amount|preis|cost/i.test(value)) {
+        addPricesFromText(value, "Preis aus Seitendaten");
+        const match = value.match(numberPricePattern);
+        if (match) {
+          addPrice(match[1], "", "Preis aus Seitendaten (ohne Währung)");
+        }
+      }
     }
   }
 
@@ -137,18 +176,37 @@
   }
   const image = pageProduct?.image;
   const imageUrl = Array.isArray(image) ? image[0] : image;
-  const absoluteImageUrl = imageUrl
-    ? new URL(imageUrl, window.location.href).href
-    : meta('meta[property="og:image"]') ||
-      meta('meta[name="twitter:image"]') ||
-      "";
+  const imageCandidates = [
+    imageUrl,
+    meta('meta[property="og:image"]'),
+    meta('meta[name="twitter:image"]'),
+    meta('meta[property="og:image:url"]'),
+    ...[...document.querySelectorAll(
+      'img[src], img[currentSrc], img[data-src], img[data-lazy-src], img[srcset], picture source[srcset]'
+    )].slice(0, 20).flatMap((element) => [
+      element.currentSrc,
+      element.getAttribute("src"),
+      element.getAttribute("data-src"),
+      element.getAttribute("data-lazy-src"),
+      element.getAttribute("srcset")?.split(",")[0]?.trim().split(/\s+/)[0]
+    ])
+  ];
+  const absoluteImageUrl = imageCandidates
+    .map((candidate) => {
+      try {
+        return candidate ? new URL(candidate, window.location.href).href : "";
+      } catch {
+        return "";
+      }
+    })
+    .find((candidate) => /^https?:\/\//i.test(candidate)) || "";
   const hasProductMarkup = Boolean(document.querySelector(
     '[itemprop="price"], [itemprop="priceCurrency"], [itemtype*="Product"]'
   ));
   const hasProductUrl = /\/(?:dp|gp\/product|product|products|item|p)(?:\/|[-_])/i
     .test(window.location.pathname);
   const isLikelyProduct = !isDifferentSelectedLink &&
-    Boolean(name && prices.length &&
+    Boolean(name &&
       (jsonLdProducts.length || hasProductMarkup || absoluteImageUrl || hasProductUrl));
   const product = {
     url: selectedLink?.url || window.location.href,
