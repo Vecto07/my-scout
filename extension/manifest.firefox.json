@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Universal Cart",
-  "version": "1.0.4",
-  "description": "Save products to a future universal cart.",
+  "name": "Scout",
+  "version": "1.0.5",
+  "description": "Save products to Scout.",
   "permissions": [
     "activeTab",
     "clipboardWrite",
@@ -11,7 +11,7 @@
     "https://api.my-scout.app/*"
   ],
   "browser_action": {
-    "default_title": "Universal Cart",
+    "default_title": "Scout",
     "default_popup": "popup.html"
   },
   "background": {

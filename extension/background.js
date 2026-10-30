@@ -11,7 +11,7 @@ const lastScrapeByTab = new Map();
 function createContextMenu() {
   extensionApi.contextMenus.create({
     id: menuId,
-    title: "Produkt auf dieser Seite lesen",
+    title: "Produkt mit Scout speichern",
     contexts: ["page", "link"]
   });
 }
@@ -171,7 +171,7 @@ async function addToCart(product, tokenOverride, manualPrice) {
       body: JSON.stringify(item)
     });
   } catch (error) {
-    console.error("Warenkorb-Server konnte nicht erreicht werden:", error);
+    console.error("Scout-Server konnte nicht erreicht werden:", error);
     throw new Error(
       "Der Server konnte nicht erreicht werden. Prüfe https://api.my-scout.app und versuche es erneut."
     );

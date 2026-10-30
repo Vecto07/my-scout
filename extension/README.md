@@ -1,4 +1,4 @@
-# Universal Cart (browser extension example)
+# Scout browser extension
 
 This is a small cross-browser WebExtension with a toolbar popup. It has a
 placeholder login form. Any non-empty credentials are accepted for now. After
@@ -40,7 +40,7 @@ After loading the extension, create an account or log in with the backend
 username and password. Registration calls `/api/auth/register` with
 `benutzername`, `email`, and `passwort`; after successful registration the
 extension logs in automatically. Then right-click a product page and select
-**Add product to Universal Cart**.
+**Produkt mit Scout speichern**.
 The backend must be running at `https://api.my-scout.app`; the extension logs in
 at `/api/auth/login` and posts this payload to `/api/artikel`:
 
