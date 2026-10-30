@@ -55,10 +55,10 @@ Wants=network-online.target
 User=universal-cart
 Group=universal-cart
 WorkingDirectory=/opt/universal-cart
+EnvironmentFile=/etc/universal-cart/backend.env
 ExecStart=/usr/bin/java -jar /opt/universal-cart/backend.jar
 Restart=on-failure
 RestartSec=5
-EnvironmentFile=/etc/universal-cart/backend.env
 
 [Install]
 WantedBy=multi-user.target
@@ -91,7 +91,9 @@ universal-cart`, damit der Workflow ohne interaktives Passwort deployen kann.
 3. Wähle **GitHub Actions** als Source und trage unter **Custom domain**
    `my-scout.app` ein. Speichere und warte, bis GitHub die DNS-Prüfung
    bestätigt. Aktiviere danach **Enforce HTTPS**.
-4. Die Seite muss danach unter `https://my-scout.app/Warenkorb.html` und
+4. GitHub stellt das SSL-Zertifikat für `my-scout.app` nach erfolgreicher
+   DNS-Verifizierung automatisch bereit. Aktiviere danach **Enforce HTTPS**.
+   Die Seite muss unter `https://my-scout.app/Warenkorb.html` und
    `https://my-scout.app/` erreichbar sein. `index.html` leitet automatisch auf
    `Warenkorb.html` weiter.
 
