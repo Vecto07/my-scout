@@ -9,6 +9,38 @@
     login: "/api/auth/login",
     articles: "/api/artikel"
   };
+  const ERROR_CODES = {
+    usernameRequired: "VAL-AUTH-001",
+    usernameTooLong: "VAL-AUTH-002",
+    emailRequired: "VAL-AUTH-003",
+    emailInvalid: "VAL-AUTH-004",
+    passwordRequired: "VAL-AUTH-005",
+    passwordTooShort: "VAL-AUTH-006",
+    passwordTooLong: "VAL-AUTH-007",
+    articleNameRequired: "VAL-ART-001",
+    articleNameTooLong: "VAL-ART-002",
+    articleUrlRequired: "VAL-ART-003",
+    articleUrlInvalid: "VAL-ART-004",
+    articleUrlProtocol: "VAL-ART-005",
+    imageUrlInvalid: "VAL-ART-006",
+    priceInvalid: "VAL-ART-007",
+    shopNameTooLong: "VAL-ART-008",
+    loginFailed: "AUTH-LOGIN-001",
+    registrationRejected: "AUTH-REGISTER-001",
+    usernameTaken: "AUTH-REGISTER-002",
+    sessionExpired: "AUTH-SESSION-001",
+    network: "API-NET-001",
+    badRequest: "API-HTTP-400",
+    forbidden: "API-HTTP-403",
+    notFound: "API-HTTP-404",
+    conflict: "API-HTTP-409",
+    invalidData: "API-HTTP-422",
+    rateLimited: "API-HTTP-429",
+    server: "API-SERVER-001",
+    unexpected: "APP-UNEXPECTED-001",
+    invalidArticleList: "API-RESPONSE-001",
+    invalidToken: "API-RESPONSE-002"
+  };
 
   const elements = {
     authView: document.querySelector("#auth-view"),
@@ -53,12 +85,21 @@
     if (token) headers.Authorization = `Bearer ${token}`;
     if (body !== undefined) headers["Content-Type"] = "application/json";
 
-    const response = await fetch(`${API_BASE}${path}`, {
-      method,
-      headers,
-      body: body === undefined ? undefined : JSON.stringify(body)
-    });
-    const responseText = await response.text();
+    let response;
+    let responseText;
+    try {
+      response = await fetch(`${API_BASE}${path}`, {
+        method,
+        headers,
+        body: body === undefined ? undefined : JSON.stringify(body)
+      });
+      responseText = await response.text();
+    } catch {
+      throw createAppError(
+        ERROR_CODES.network,
+        "Der Server ist nicht erreichbar. Prüfe, ob das Backend läuft und CORS für das Frontend freigegeben ist."
+      );
+    }
     let result = responseText;
 
     if (responseText) {
@@ -70,12 +111,9 @@
     }
 
     if (!response.ok) {
-      const message = typeof result === "string"
-        ? result
-        : result.message || result.error || "Die Anfrage konnte nicht verarbeitet werden.";
-      const error = new Error(message);
-      error.status = response.status;
-      throw error;
+      const code = getHttpErrorCode(path, response.status);
+      const message = getResponseErrorMessage(result, response.status);
+      throw createAppError(code, message, response.status);
     }
 
     return result;
@@ -87,9 +125,107 @@
     element.classList.toggle("is-success", !isError && Boolean(message));
   }
 
+  function createAppError(code, message, status) {
+    const error = new Error(message);
+    error.code = code;
+    if (status !== undefined) error.status = status;
+    return error;
+  }
+
+  function getHttpErrorCode(path, status) {
+    if (path === API_ROUTES.login && status === 401) return ERROR_CODES.loginFailed;
+    if (path === API_ROUTES.register && status === 400) return ERROR_CODES.registrationRejected;
+    if (path === API_ROUTES.register && status === 409) return ERROR_CODES.usernameTaken;
+
+    if (status === 400) return ERROR_CODES.badRequest;
+    if (status === 401) return ERROR_CODES.sessionExpired;
+    if (status === 403) return ERROR_CODES.forbidden;
+    if (status === 404) return ERROR_CODES.notFound;
+    if (status === 409) return ERROR_CODES.conflict;
+    if (status === 422) return ERROR_CODES.invalidData;
+    if (status === 429) return ERROR_CODES.rateLimited;
+    if (status >= 500) return ERROR_CODES.server;
+    return `API-HTTP-${status}`;
+  }
+
+  function getResponseErrorMessage(result, status) {
+    const detail = typeof result === "string"
+      ? result.trim()
+      : result && (result.message || result.error || result.detail);
+    if (detail) return `${detail}`.slice(0, 300);
+    return `Die Anfrage wurde vom Server abgelehnt (HTTP ${status}).`;
+  }
+
+  function setErrorMessage(element, error) {
+    const appError = error && error.code
+      ? error
+      : createAppError(ERROR_CODES.unexpected, "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.");
+    setMessage(element, `[${appError.code}] ${appError.message}`);
+  }
+
+  function getValidationError(form, input) {
+    const isAuthForm = form === elements.authForm;
+    const name = input.name;
+
+    if (isAuthForm) {
+      if (name === "username") {
+        if (input.validity.valueMissing) return createAppError(ERROR_CODES.usernameRequired, "Bitte gib einen Benutzernamen ein.");
+        if (input.validity.tooLong) return createAppError(ERROR_CODES.usernameTooLong, "Der Benutzername darf höchstens 100 Zeichen lang sein.");
+      }
+      if (name === "email") {
+        if (input.validity.valueMissing) return createAppError(ERROR_CODES.emailRequired, "Bitte gib für die Registrierung eine E-Mail-Adresse ein.");
+        if (input.validity.typeMismatch) return createAppError(ERROR_CODES.emailInvalid, "Bitte gib eine gültige E-Mail-Adresse ein.");
+      }
+      if (name === "password") {
+        if (input.validity.valueMissing) return createAppError(ERROR_CODES.passwordRequired, "Bitte gib ein Passwort ein.");
+        if (input.validity.tooShort) return createAppError(ERROR_CODES.passwordTooShort, "Das Passwort muss mindestens 8 Zeichen enthalten.");
+        if (input.validity.tooLong) return createAppError(ERROR_CODES.passwordTooLong, "Das Passwort darf höchstens 128 Zeichen lang sein.");
+      }
+    } else {
+      if (name === "title") {
+        if (input.validity.valueMissing) return createAppError(ERROR_CODES.articleNameRequired, "Bitte gib einen Produktnamen ein.");
+        if (input.validity.tooLong) return createAppError(ERROR_CODES.articleNameTooLong, "Der Produktname darf höchstens 255 Zeichen lang sein.");
+      }
+      if (name === "url") {
+        if (input.validity.valueMissing) return createAppError(ERROR_CODES.articleUrlRequired, "Bitte gib einen Link zum Produkt ein.");
+        if (input.validity.typeMismatch) return createAppError(ERROR_CODES.articleUrlInvalid, "Bitte gib eine gültige Produktadresse ein.");
+      }
+      if (name === "image" && input.validity.typeMismatch) {
+        return createAppError(ERROR_CODES.imageUrlInvalid, "Bitte gib eine gültige Bildadresse ein.");
+      }
+      if (name === "price" && (
+        input.validity.badInput ||
+        input.validity.rangeUnderflow ||
+        input.validity.stepMismatch
+      )) {
+        return createAppError(ERROR_CODES.priceInvalid, "Bitte gib einen gültigen Preis ab 0 Euro mit höchstens zwei Nachkommastellen ein.");
+      }
+      if (name === "shopName" && input.validity.tooLong) {
+        return createAppError(ERROR_CODES.shopNameTooLong, "Der Shopname darf höchstens 255 Zeichen lang sein.");
+      }
+    }
+
+    return createAppError(ERROR_CODES.unexpected, "Bitte prüfe deine Eingaben und versuche es erneut.");
+  }
+
+  function handleInvalidInput(form, messageElement, event) {
+    event.preventDefault();
+    if (form.dataset.validationErrorDisplayed) return;
+
+    const error = getValidationError(form, event.target);
+    form.dataset.validationErrorDisplayed = "true";
+    setErrorMessage(messageElement, error);
+  }
+
+  function clearValidationMessage(form, messageElement) {
+    delete form.dataset.validationErrorDisplayed;
+    setMessage(messageElement, "");
+  }
+
   function setAuthMode(mode) {
     state.authMode = mode;
     const isRegister = mode === "register";
+    delete elements.authForm.dataset.validationErrorDisplayed;
 
     elements.loginTab.classList.toggle("is-active", !isRegister);
     elements.registerTab.classList.toggle("is-active", isRegister);
@@ -114,15 +250,18 @@
   }
 
   function normalizeWebUrl(rawUrl, label) {
+    const isImageUrl = label === "Bildadresse";
     let url;
     try {
       url = new URL(rawUrl.trim());
     } catch (error) {
-      throw new Error(`Bitte gib eine gültige ${label} ein.`);
+      const code = isImageUrl ? ERROR_CODES.imageUrlInvalid : ERROR_CODES.articleUrlInvalid;
+      throw createAppError(code, `Bitte gib eine gültige ${label} ein.`);
     }
 
     if (!["http:", "https:"].includes(url.protocol)) {
-      throw new Error(`Bitte verwende für ${label} einen HTTP- oder HTTPS-Link.`);
+      const code = isImageUrl ? ERROR_CODES.imageUrlInvalid : ERROR_CODES.articleUrlProtocol;
+      throw createAppError(code, `Bitte verwende für ${label} einen HTTP- oder HTTPS-Link.`);
     }
 
     return url.href;
@@ -236,7 +375,7 @@
   async function loadArticles() {
     const articles = await request(API_ROUTES.articles);
     if (!Array.isArray(articles)) {
-      throw new Error("Der Server hat eine ungültige Artikelliste gesendet.");
+      throw createAppError(ERROR_CODES.invalidArticleList, "Der Server hat eine ungültige Artikelliste gesendet.");
     }
     state.articles = articles;
     renderArticles();
@@ -257,10 +396,14 @@
         elements.dashboardView.classList.add("is-hidden");
         elements.authView.classList.remove("is-hidden");
         elements.logoutButton.classList.add("is-hidden");
-        setMessage(elements.authMessage, "Deine Anmeldung ist abgelaufen. Bitte melde dich erneut an.");
+        setErrorMessage(elements.authMessage, createAppError(
+          ERROR_CODES.sessionExpired,
+          "Deine Anmeldung ist abgelaufen. Bitte melde dich erneut an.",
+          error.status
+        ));
         return;
       }
-      setMessage(elements.linkMessage, error.message);
+      setErrorMessage(elements.linkMessage, error);
     }
   }
 
@@ -268,6 +411,12 @@
     event.preventDefault();
     const username = elements.usernameInput.value.trim();
     const password = elements.passwordInput.value;
+
+    if (!username) {
+      setErrorMessage(elements.authMessage, createAppError(ERROR_CODES.usernameRequired, "Bitte gib einen Benutzernamen ein."));
+      elements.usernameInput.focus();
+      return;
+    }
 
     elements.authSubmit.disabled = true;
     setMessage(elements.authMessage, "");
@@ -286,7 +435,7 @@
         passwort: password
       });
       if (typeof token !== "string" || !token.trim()) {
-        throw new Error("Der Server hat kein gültiges Anmeldetoken zurückgegeben.");
+        throw createAppError(ERROR_CODES.invalidToken, "Der Server hat kein gültiges Anmeldetoken zurückgegeben.");
       }
 
       sessionStorage.setItem(TOKEN_KEY, token.trim());
@@ -294,7 +443,7 @@
       await showDashboard();
       elements.authForm.reset();
     } catch (error) {
-      setMessage(elements.authMessage, error.message);
+      setErrorMessage(elements.authMessage, error);
     } finally {
       elements.authSubmit.disabled = false;
     }
@@ -302,6 +451,18 @@
 
   async function handleCreateArticle(event) {
     event.preventDefault();
+
+    if (!elements.linkTitleInput.value.trim()) {
+      setErrorMessage(elements.linkMessage, createAppError(ERROR_CODES.articleNameRequired, "Bitte gib einen Produktnamen ein."));
+      elements.linkTitleInput.focus();
+      return;
+    }
+
+    if (!elements.linkUrlInput.value.trim()) {
+      setErrorMessage(elements.linkMessage, createAppError(ERROR_CODES.articleUrlRequired, "Bitte gib einen Link zum Produkt ein."));
+      elements.linkUrlInput.focus();
+      return;
+    }
 
     let url;
     let imageUrl = "";
@@ -311,14 +472,17 @@
         imageUrl = normalizeWebUrl(elements.imageInput.value, "Bildadresse");
       }
     } catch (error) {
-      setMessage(elements.linkMessage, error.message);
+      setErrorMessage(elements.linkMessage, error);
       return;
     }
 
     const priceValue = elements.priceInput.value.trim();
     const price = priceValue ? Number(priceValue) : 0;
     if (!Number.isFinite(price) || price < 0) {
-      setMessage(elements.linkMessage, "Bitte gib einen gültigen Preis ab 0 Euro ein.");
+      setErrorMessage(elements.linkMessage, createAppError(
+        ERROR_CODES.priceInvalid,
+        "Bitte gib einen gültigen Preis ab 0 Euro mit höchstens zwei Nachkommastellen ein."
+      ));
       elements.priceInput.focus();
       return;
     }
@@ -331,11 +495,23 @@
         shopName: elements.shopInput.value.trim(),
         bildUrl: imageUrl
       });
-      await loadArticles();
       elements.linkForm.reset();
+      delete elements.linkForm.dataset.validationErrorDisplayed;
       setMessage(elements.linkMessage, "Produkt gespeichert – du findest es jetzt in deiner Sammlung.", false);
     } catch (error) {
-      setMessage(elements.linkMessage, error.message);
+      setErrorMessage(elements.linkMessage, error);
+      return;
+    }
+
+    try {
+      await loadArticles();
+    } catch (error) {
+      const code = error && error.code ? error.code : ERROR_CODES.unexpected;
+      setErrorMessage(elements.linkMessage, createAppError(
+        code,
+        `Das Produkt wurde gespeichert, aber die Sammlung konnte nicht aktualisiert werden. ${error.message}`,
+        error.status
+      ));
     }
   }
 
@@ -344,7 +520,7 @@
       await request(`${API_ROUTES.articles}/${encodeURIComponent(id)}`, "DELETE");
       await loadArticles();
     } catch (error) {
-      setMessage(elements.linkMessage, error.message);
+      setErrorMessage(elements.linkMessage, error);
     }
   }
 
@@ -392,7 +568,19 @@
     elements.loginTab.addEventListener("click", () => setAuthMode("login"));
     elements.registerTab.addEventListener("click", () => setAuthMode("register"));
     elements.authForm.addEventListener("submit", handleAuthSubmit);
+    elements.authForm.addEventListener("invalid", event => {
+      handleInvalidInput(elements.authForm, elements.authMessage, event);
+    }, true);
+    elements.authForm.addEventListener("input", () => {
+      clearValidationMessage(elements.authForm, elements.authMessage);
+    });
     elements.linkForm.addEventListener("submit", handleCreateArticle);
+    elements.linkForm.addEventListener("invalid", event => {
+      handleInvalidInput(elements.linkForm, elements.linkMessage, event);
+    }, true);
+    elements.linkForm.addEventListener("input", () => {
+      clearValidationMessage(elements.linkForm, elements.linkMessage);
+    });
     elements.logoutButton.addEventListener("click", handleLogout);
     elements.emptyAddButton.addEventListener("click", () => {
       elements.linkTitleInput.focus();
