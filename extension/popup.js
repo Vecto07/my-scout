@@ -326,7 +326,7 @@ document.querySelector("#add-product").addEventListener("click", async () => {
         console.error("Gefundenes Produkt konnte nicht angezeigt werden:", storageError);
       }
     }
-    status.textContent = "Das Produkt konnte nicht gespeichert werden.";
+    status.textContent = error.message || "Das Produkt konnte nicht gespeichert werden.";
   }
 });
 

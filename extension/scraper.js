@@ -66,25 +66,25 @@
       return;
     }
 
-    function addPriceFromElement(element, source) {
-      if (!element) {
-        return;
-      }
-      const value = element.getAttribute("content") ||
-        element.getAttribute("data-price") ||
-        element.getAttribute("data-product-price") ||
-        element.textContent;
-      addPricesFromText(value, source);
-      if (!prices.length && value) {
-        const match = String(value).match(numberPricePattern);
-        if (match) {
-          addPrice(match[1], "", `${source} (ohne Währung)`);
-        }
-      }
-    }
-
     for (const match of String(value).match(pricePattern) || []) {
       addPrice(match, "", source);
+    }
+  }
+
+  function addPriceFromElement(element, source) {
+    if (!element) {
+      return;
+    }
+    const value = element.getAttribute("content") ||
+      element.getAttribute("data-price") ||
+      element.getAttribute("data-product-price") ||
+      element.textContent;
+    addPricesFromText(value, source);
+    if (!prices.length && value) {
+      const match = String(value).match(numberPricePattern);
+      if (match) {
+        addPrice(match[1], "", `${source} (ohne Währung)`);
+      }
     }
   }
 
