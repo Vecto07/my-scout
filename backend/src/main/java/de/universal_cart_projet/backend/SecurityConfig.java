@@ -32,7 +32,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of(
-            "https://vecto07.github.io",
+            "https://my-scout.app",
+            "https://www.my-scout.app",
             "http://localhost:*",
             "http://127.0.0.1:*",
             "chrome-extension://*",

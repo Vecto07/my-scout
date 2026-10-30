@@ -2,6 +2,7 @@ package de.universal_cart_projet.backend;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -9,9 +10,14 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    // Dieser geheime Schlüssel bleibt nur dem Server bekannt (Muss mind. 32 Zeichen lang sein)
-    private static final String SECRET = "MeinSuperGeheimesUndSehrLangesPasswortFuerJwtTokens123!";
-    private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private final SecretKey key;
+
+    public JwtService(@Value("${app.jwt.secret}") String secret) {
+        if (secret == null || secret.length() < 32) {
+            throw new IllegalArgumentException("app.jwt.secret must contain at least 32 characters");
+        }
+        key = Keys.hmacShaKeyFor(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
 
     public String generiereToken(String benutzername) {
         return Jwts.builder()

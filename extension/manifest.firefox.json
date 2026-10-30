@@ -8,7 +8,7 @@
     "clipboardWrite",
     "storage",
     "contextMenus",
-    "https://warenkorb.duckdns.org/*"
+    "https://api.my-scout.app/*"
   ],
   "browser_action": {
     "default_title": "Universal Cart",

@@ -41,7 +41,7 @@ username and password. Registration calls `/api/auth/register` with
 `benutzername`, `email`, and `passwort`; after successful registration the
 extension logs in automatically. Then right-click a product page and select
 **Add product to Universal Cart**.
-The backend must be running at `https://warenkorb.duckdns.org`; the extension logs in
+The backend must be running at `https://api.my-scout.app`; the extension logs in
 at `/api/auth/login` and posts this payload to `/api/artikel`:
 
 ```json
@@ -62,7 +62,7 @@ title and price plus at least one product signal, such as product structured
 data, product markup, a product image, or a product-like URL.
 
 If the backend is not running, the extension reports that it could not connect
-to `https://warenkorb.duckdns.org`. A valid backend login is required before adding
+to `https://api.my-scout.app`. A valid backend login is required before adding
 products.
 
 When adding fails after scraping, the popup still displays the scraped product

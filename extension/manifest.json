@@ -11,7 +11,7 @@
     "scripting"
   ],
   "host_permissions": [
-    "https://warenkorb.duckdns.org/*"
+    "https://api.my-scout.app/*"
   ],
   "action": {
     "default_title": "Universal Cart",

@@ -4,7 +4,7 @@ const extensionApi =
 
 const menuId = "add-product-to-cart";
 const scrapeCooldownMs = 5000;
-const apiBaseUrl = "https://warenkorb.duckdns.org";
+const apiBaseUrl = "https://api.my-scout.app";
 const tokenStorageKey = "jwtToken";
 const lastScrapeByTab = new Map();
 
@@ -163,7 +163,7 @@ async function addToCart(product, tokenOverride) {
   } catch (error) {
     console.error("Warenkorb-Server konnte nicht erreicht werden:", error);
     throw new Error(
-      "Der Server konnte nicht erreicht werden. Prüfe https://warenkorb.duckdns.org und versuche es erneut."
+      "Der Server konnte nicht erreicht werden. Prüfe https://api.my-scout.app und versuche es erneut."
     );
   }
   if (!response.ok) {

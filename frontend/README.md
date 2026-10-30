@@ -19,7 +19,7 @@ Alle Dateien der Webanwendung liegen in `src`; diese Dokumentation bleibt im Fro
 1. PostgreSQL starten und die Verbindung in `../backend/src/main/resources/application.properties` passend zur lokalen Umgebung konfigurieren.
 2. Java 21 verwenden und Spring Boot aus dem `backend`-Ordner starten: unter Windows `mvnw.cmd spring-boot:run`, unter macOS/Linux `./mvnw spring-boot:run`.
 3. Das Verzeichnis `frontend` mit einem Webserver bereitstellen, z. B. Apache unter XAMPP. `src/index.html` über `http://localhost/.../src/` und nicht als `file://` öffnen.
-4. Die API-Adresse ist standardmäßig `http://localhost:8080` und wird durch das `api-base`-Meta-Element in `src/Warenkorb.html` konfiguriert.
+4. Die API-Adresse ist für die Produktion `https://api.my-scout.app` und wird durch das `api-base`-Meta-Element in `src/Warenkorb.html` konfiguriert. Für lokale Entwicklung kann dort vorübergehend `http://localhost:8080` eingetragen werden.
 
 ## Ablauf und API
 
@@ -46,4 +46,4 @@ Die Registrierung gibt einen Text zurück. Danach meldet sich das Frontend autom
 
 ## Änderungen
 
-Bei Änderungen an Formularen `src/Warenkorb.html`, die Elementreferenzen und Payloads in `src/Warenkorb.js` sowie die Java-Felder im Backend gemeinsam prüfen. Neue Layoutregeln kommen in `src/Warenkorb_Desin.css`; ergänzende Backend-Darstellung kann in `src/Warenkorb_Backend.css` bleiben. Bei Änderungen des API-Ursprungs `src/Warenkorb.html` anpassen und CORS der Backend-Umgebung prüfen.
+Bei Änderungen an Formularen `src/Warenkorb.html`, die Elementreferenzen und Payloads in `src/Warenkorb.js` sowie die Java-Felder im Backend gemeinsam prüfen. Neue Layoutregeln kommen in `src/Warenkorb_Desin.css`; ergänzende Backend-Darstellung kann in `src/Warenkorb_Backend.css` bleiben. Bei Änderungen des API-Ursprungs `src/Warenkorb.html` anpassen und CORS der Backend-Umgebung prüfen. Die Produktions-Domains sind `https://my-scout.app` für GitHub Pages und `https://api.my-scout.app` für die API.
