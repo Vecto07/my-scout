@@ -88,17 +88,25 @@ jobs:
       - name: Firefox-Paket erstellen
         env:
           TAG: ${{ steps.release.outputs.tag }}
+          AMO_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
         run: |
+          test -n "$AMO_API_KEY" || { echo "Das GitHub Secret AMO_JWT_ISSUER fehlt." >&2; exit 1; }
+          test -n "$AMO_API_SECRET" || { echo "Das GitHub Secret AMO_JWT_SECRET fehlt." >&2; exit 1; }
+          rm -rf build/firefox dist/firefox
           mkdir -p build/firefox dist/firefox
           cp -R extension/. build/firefox/
           mv build/firefox/manifest.firefox.json build/firefox/manifest.json
-          npx --yes web-ext build \
+          npx --yes web-ext sign \
             --source-dir build/firefox \
             --artifacts-dir dist/firefox \
-            --filename "universal-cart-firefox-${TAG}.xpi" \
-            --overwrite-dest
-          mv "dist/firefox/universal-cart-firefox-${TAG}.xpi" \
-            "dist/universal-cart-firefox-${TAG}.xpi"
+            --api-key "$AMO_API_KEY" \
+            --api-secret "$AMO_API_SECRET" \
+            --channel unlisted \
+            --no-input
+          signed_xpi=$(find dist/firefox -maxdepth 1 -type f -name '*.xpi' -print -quit)
+          test -n "$signed_xpi" || { echo "web-ext hat kein signiertes Firefox-XPI erzeugt." >&2; exit 1; }
+          mv "$signed_xpi" "dist/universal-cart-firefox-${TAG}.xpi"
 
       - name: GitHub Release erstellen
         env:
