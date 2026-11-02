@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "Scout",
+  "name": "My Scout",
   "version": "1.0.6",
-  "description": "Save products to Scout.",
+  "description": "Save products to My Scout.",
   "browser_specific_settings": {
     "gecko": {
-      "id": "scout@my-scout.app",
+      "id": "my-scout@my-scout.app",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": [
@@ -22,7 +22,7 @@
     "https://api.my-scout.app/*"
   ],
   "browser_action": {
-    "default_title": "Scout",
+    "default_title": "My Scout",
     "default_popup": "popup.html"
   },
   "background": {
