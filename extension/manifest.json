@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Scout",
+  "name": "My Scout",
   "version": "1.0.7",
-  "description": "Save products to Scout.",
+  "description": "Save products to My Scout.",
   "permissions": [
     "activeTab",
     "clipboardWrite",
@@ -14,7 +14,7 @@
     "https://api.my-scout.app/*"
   ],
   "action": {
-    "default_title": "Scout",
+    "default_title": "My Scout",
     "default_popup": "popup.html"
   },
   "background": {

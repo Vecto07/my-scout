@@ -1,4 +1,4 @@
-# Scout browser extension
+# My Scout browser extension
 
 This is a small cross-browser WebExtension with a toolbar popup. It has a
 placeholder login form. Any non-empty credentials are accepted for now. After
@@ -40,7 +40,7 @@ After loading the extension, create an account or log in with the backend
 username and password. Registration calls `/api/auth/register` with
 `benutzername`, `email`, and `passwort`; after successful registration the
 extension logs in automatically. Then right-click a product page and select
-**Produkt mit Scout speichern**.
+**Produkt mit My Scout speichern**.
 The backend must be running at `https://api.my-scout.app`; the extension logs in
 at `/api/auth/login` and posts this payload to `/api/artikel`:
 
@@ -99,20 +99,18 @@ scrapes in the same tab and stops when the page does not allow access.
 5. Press the extension's toolbar button. If it is not visible, use the
    extensions menu to add it to the toolbar.
 
-Temporary add-ons are removed when Firefox restarts. The release XPI is signed
-through Mozilla Add-ons and can be installed permanently in the regular
-Firefox release channel.
+Temporary add-ons are removed when Firefox restarts. The release XPI is
+unsigned and should be uploaded to Mozilla Add-ons for signing before
+permanent installation.
 
 ## Create a GitHub release
 
 Every push to `main` that changes `extension/**` automatically increments the
 patch version in both manifests, creates a `v<version>` tag, and publishes a
 GitHub Release. The release contains
-`universal-cart-chrome-<tag>.zip` and `universal-cart-firefox-<tag>.xpi`.
-The Firefox package is signed as an unlisted add-on through Mozilla Add-ons.
-The repository must have the `AMO_JWT_ISSUER` and `AMO_JWT_SECRET` Actions
-secrets configured with signing credentials created at
-`addons.mozilla.org`.
+`my-scout-chrome-<tag>.zip` and `my-scout-firefox-<tag>.xpi`.
+Upload the Firefox XPI to `addons.mozilla.org` for signing before distributing
+it as a permanent Firefox add-on.
 The workflow can also be started manually from the Actions tab. Leave the tag
 empty to increment the patch version, or provide an explicit `vX.Y.Z` tag.
 
