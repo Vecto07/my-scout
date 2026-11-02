@@ -1,57 +1,179 @@
 :root {
   color-scheme: light;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #17212b;
-  background: #f5f7f9;
+  --page: #eee9dc;
+  --surface: #eee9dc;
+  --ink: #18352f;
+  --muted: #18352f;
+  --line: #18352f;
+  --accent: #c84b2b;
+  --font: "Segoe UI", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  border-radius: 0 !important;
+}
+
+html,
+body {
+  min-width: 320px;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
-  line-height: 1.6;
-}
-
-main {
-  box-sizing: border-box;
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 48px 24px 64px;
-}
-
-h1,
-h2 {
-  line-height: 1.2;
+  background: var(--page);
+  color: var(--ink);
+  font: 14px/1.6 var(--font);
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
-  color: #1769aa;
+  color: var(--ink);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+.page-shell {
+  width: min(1180px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+.topbar {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.brand {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -.55px;
+  text-decoration: none;
+}
+
+.brand-period {
+  color: var(--accent);
 }
 
 .legal-nav {
   display: flex;
-  gap: 16px;
-  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 42px;
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.legal-main {
+  min-height: calc(100vh - 136px);
+  padding: 62px 42px 76px;
+}
+
+.legal-heading {
+  max-width: 760px;
+  margin-bottom: 34px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.eyebrow::before {
+  width: 22px;
+  height: 1px;
+  background: var(--accent);
+  content: "";
+}
+
+h1,
+h2 {
+  line-height: 1.15;
+}
+
+h1 {
+  margin: 16px 0 0;
+  font-size: clamp(40px, 6vw, 64px);
+  letter-spacing: -.055em;
+}
+
+h2 {
+  margin: 34px 0 10px;
+  font-size: 19px;
 }
 
 .legal-card {
-  padding: 32px;
-  background: #fff;
-  border: 1px solid #dfe5ea;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgb(23 33 43 / 6%);
+  max-width: 860px;
+  padding: 30px 0 0;
+  border-top: 4px solid var(--accent);
+}
+
+.legal-card p {
+  max-width: 760px;
+  margin: 0 0 16px;
 }
 
 .legal-footer {
-  margin-top: 40px;
-  color: #5e6b76;
-  font-size: 0.9rem;
+  margin-top: 42px !important;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+  font-size: 10px;
+}
+
+.footer {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.footer-muted {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
 }
 
 @media (max-width: 600px) {
-  main {
-    padding: 28px 16px 40px;
+  .page-shell {
+    width: calc(100% - 32px);
   }
 
-  .legal-card {
-    padding: 24px 20px;
+  .topbar {
+    min-height: 64px;
+  }
+
+  .legal-main {
+    padding: 38px 0 52px;
+  }
+
+  .legal-nav {
+    margin-bottom: 32px;
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 0;
   }
 }
