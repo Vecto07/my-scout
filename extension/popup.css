@@ -37,6 +37,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.legal-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 11px;
+}
+
 main {
   padding: 16px;
   border-top: 4px solid var(--accent);
