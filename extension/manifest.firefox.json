@@ -3,6 +3,17 @@
   "name": "Scout",
   "version": "1.0.6",
   "description": "Save products to Scout.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "scout@my-scout.app",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
   "permissions": [
     "activeTab",
     "clipboardWrite",
