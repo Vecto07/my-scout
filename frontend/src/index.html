@@ -10,8 +10,6 @@
   <link rel="stylesheet" href="Warenkorb_Desin.css">
   <link rel="stylesheet" href="Warenkorb_Backend.css">
 </head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2419030723209788"
-     crossorigin="anonymous"></script>
 <body>
   <div class="page-shell">
     <header class="topbar">
@@ -35,8 +33,22 @@
         <div class="content-grid"><section class="links-panel" aria-labelledby="links-heading"><div class="panel-heading"><div><span class="eyebrow">DEINE SAMMLUNG</span><h2 id="links-heading">Gespeicherte Produkte</h2></div></div><label class="search-field" for="link-search"><span class="search-icon" aria-hidden="true">⌕</span><input id="link-search" type="search" autocomplete="off" placeholder="Nach Produkt, Shop oder URL suchen" aria-label="Produkte nach Name, Shop oder Adresse durchsuchen"></label><div class="link-list" id="link-list" aria-live="polite"></div><div class="empty-state" id="empty-state"><span class="empty-icon" aria-hidden="true">＋</span><h3>Hier ist noch Platz für gute Funde.</h3><p>Füge dein erstes Produkt hinzu – du findest es hier jederzeit wieder.</p><button class="secondary-button" type="button" id="empty-add-button">Erstes Produkt speichern <span aria-hidden="true">→</span></button></div></section>
           <aside class="add-panel" id="add-panel" aria-labelledby="add-heading"><div class="add-panel-top"><span class="add-icon" aria-hidden="true">＋</span><span class="eyebrow">FÜR SPÄTER GEMERKT</span></div><h2 id="add-heading">Neues Produkt<br>hinzufügen</h2><p class="add-intro">Ein guter Fund verdient einen festen Platz.</p><form id="link-form"><label for="link-title">Wie heißt das Produkt?</label><input id="link-title" name="title" type="text" maxlength="255" placeholder="z. B. Die perfekte Lampe" required><label for="link-url">Link zum Shop</label><div class="input-wrap url-wrap"><span class="input-icon" aria-hidden="true">↗</span><input id="link-url" name="url" type="url" placeholder="https://beispiel.de/produkt" required></div><label for="link-shop">Shop <span class="optional-label">optional</span></label><input id="link-shop" name="shopName" type="text" maxlength="255" placeholder="z. B. Lieblingsshop"><label for="link-price">Preis in Euro <span class="optional-label">optional</span></label><input id="link-price" name="price" type="number" min="0" step="0.01" placeholder="0,00"><label for="link-image">Bild-URL <span class="optional-label">optional</span></label><div class="input-wrap url-wrap"><span class="input-icon" aria-hidden="true">▧</span><input id="link-image" name="image" type="url" placeholder="https://beispiel.de/bild.jpg"></div><p class="form-message" id="link-message" role="status" aria-live="polite"></p><button class="primary-button save-button" type="submit">Link speichern <span aria-hidden="true">→</span></button></form><div class="panel-footnote"><span aria-hidden="true">✳</span> Funktioniert mit jedem Online-Shop.</div></aside></div><p class="storage-note"><span class="status-dot"></span> Deine Sammlung wird sicher auf dem Server gespeichert.</p></section>
     </main>
-    <footer class="footer"><span>Warenkorb<span class="brand-period">.</span> <span class="footer-muted">Deine Lieblingsprodukte. Alles im Blick.</span></span><span class="footer-local"><span class="status-dot"></span> Privat &amp; persönlich · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></span></footer>
+    <footer class="footer"><span>Warenkorb<span class="brand-period">.</span> <span class="footer-muted">Deine Lieblingsprodukte. Alles im Blick.</span></span><span class="footer-local"><span class="status-dot"></span> Privat &amp; persönlich · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <button class="footer-settings" id="cookie-settings" type="button">Cookie-Einstellungen</button></span></footer>
   </div>
+  <section class="cookie-banner" id="cookie-banner" hidden aria-labelledby="cookie-heading">
+    <div>
+      <span class="eyebrow">DEINE PRIVATSPHÄRE</span>
+      <h2 id="cookie-heading">Werbung nur mit deiner Zustimmung.</h2>
+      <p>Wir verwenden Google AdSense. Dafür können Cookies und ähnliche Technologien eingesetzt werden. Du kannst zustimmen oder ablehnen.</p>
+      <a href="datenschutz.html">Mehr in der Datenschutzerklärung</a>
+    </div>
+    <div class="cookie-actions">
+      <button class="secondary-button" id="cookie-reject" type="button">Ablehnen</button>
+      <button class="primary-button" id="cookie-accept" type="button">Zustimmen</button>
+    </div>
+    <p class="cookie-status" id="cookie-status" role="status" aria-live="polite"></p>
+  </section>
   <script src="Warenkorb.js" defer></script>
+  <script src="consent.js" defer></script>
 </body>
 </html>
