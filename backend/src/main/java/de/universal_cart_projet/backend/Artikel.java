@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Column;
 
 @Entity
 public class Artikel {
@@ -16,9 +17,11 @@ public class Artikel {
     private Long id;
     
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String url;
     private double preis;
     private String shopName;
+    @Column(columnDefinition = "TEXT")
     private String bildUrl;
     
     @ManyToOne
