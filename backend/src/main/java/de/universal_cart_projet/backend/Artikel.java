@@ -17,11 +17,11 @@ public class Artikel {
     private Long id;
     
     private String name;
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "url", columnDefinition = "TEXT")
     private String url;
     private double preis;
     private String shopName;
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "bild_url", columnDefinition = "TEXT")
     private String bildUrl;
     
     @ManyToOne

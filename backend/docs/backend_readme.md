@@ -25,6 +25,13 @@ Ein Artikel besitzt in der Datenbank standardmäßig die folgenden Eigenschaften
 * `name` (String): Die Bezeichnung des Produkts.
 * `preis` (double): Der Preis des Artikels.
 * `shopName` (String): Der Name des Shops (z. B. "Amazon" oder "Otto").
-* `url` (String): Der direkte Link zur Produktseite.
-* `bildUrl` (String): Die Bildquelle des Produktfotos.
+* `url` (String): Der direkte Link zur Produktseite. Wird als PostgreSQL-`TEXT` gespeichert, damit auch sehr lange Produkt-URLs unterstützt werden.
+* `bildUrl` (String): Die Bildquelle des Produktfotos. Wird ebenfalls als PostgreSQL-`TEXT` gespeichert.
 * `benutzer` (Benutzer): Die feste Verknüpfung zum jeweiligen Besitzer des Artikels.
+
+Bei bestehenden Datenbanken müssen die Spalten einmalig angepasst werden:
+
+```sql
+ALTER TABLE artikel ALTER COLUMN url TYPE TEXT;
+ALTER TABLE artikel ALTER COLUMN bild_url TYPE TEXT;
+```
