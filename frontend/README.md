@@ -6,20 +6,20 @@ Das Frontend ist eine responsive, frameworkfreie HTML-, CSS- und JavaScript-Anwe
 
 ## Dateistruktur
 
-- `src/index.html`: Einstieg und Weiterleitung zu `src/Warenkorb.html`.
-- `src/Warenkorb.html`: Seitenstruktur, Formulare und zugängliche Statusbereiche.
+- `src/index.html`: Einstieg und Seitenstruktur, Formulare und zugängliche Statusbereiche.
 - `src/Warenkorb.js`: Ereignisse, UI-Zustand und REST-Kommunikation.
+- `src/logout-cache.js`: entfernt beim Abmelden Website-Speicher und Cache-Storage-Einträge.
 - `src/Warenkorb_Desin.css`: Layout, Farben und responsive Regeln.
 - `src/Warenkorb_Backend.css`: ergänzende Regeln, etwa für Produktbilder.
 
-Alle Dateien der Webanwendung liegen in `src`; diese Dokumentation bleibt im Frontend-Stamm. Die HTML-Datei referenziert die Stylesheets relativ aus demselben Verzeichnis.
+Alle Dateien der Webanwendung liegen in `src`; diese Dokumentation bleibt im Frontend-Stamm. Die HTML-Datei referenziert die Stylesheets und Skripte relativ aus demselben Verzeichnis.
 
 ## Lokal starten
 
 1. PostgreSQL starten und die Verbindung in `../backend/src/main/resources/application.properties` passend zur lokalen Umgebung konfigurieren.
 2. Java 21 verwenden und Spring Boot aus dem `backend`-Ordner starten: unter Windows `mvnw.cmd spring-boot:run`, unter macOS/Linux `./mvnw spring-boot:run`.
 3. Das Verzeichnis `frontend` mit einem Webserver bereitstellen, z. B. Apache unter XAMPP. `src/index.html` über `http://localhost/.../src/` und nicht als `file://` öffnen.
-4. Die API-Adresse ist für die Produktion `https://api.my-scout.app` und wird durch das `api-base`-Meta-Element in `src/Warenkorb.html` konfiguriert. Für lokale Entwicklung kann dort vorübergehend `http://localhost:8080` eingetragen werden.
+4. Die API-Adresse ist für die Produktion `https://api.my-scout.app` und wird durch das `api-base`-Meta-Element in `src/index.html` konfiguriert. Für lokale Entwicklung kann dort vorübergehend `http://localhost:8080` eingetragen werden.
 
 ## Ablauf und API
 
@@ -44,6 +44,12 @@ Die Registrierung gibt einen Text zurück. Danach meldet sich das Frontend autom
 - `getSavedTheme()` und `setTheme()` verwalten das Theme unabhängig vom Login in `localStorage`.
 - Das Backend unterstützt derzeit einzelne Produkte, nicht Warenkorbtypen, Tags oder Bearbeitung. Die UI bietet daher Suche, Anlegen und Löschen, aber keine Tag-/Warenkorbfilter oder Bearbeitung.
 
+## Abmelden und Browserdaten
+
+Beim Abmelden löscht `src/Warenkorb.js` JWT und Benutzernamen aus dem `sessionStorage`. `src/logout-cache.js` entfernt zusätzlich den Theme-Schlüssel `warenkorb.theme.v1` aus dem `localStorage`, setzt Formulare und angezeigte Produktdaten zurück und löscht Cache-Storage-Einträge des Website-Origins. Schlägt eine Bereinigung fehl, erscheint der Fehlercode `[LOGOUT-CLEANUP-001]`; die Abmeldung selbst bleibt bestehen.
+
+Webseiten können den allgemeinen HTTP-Cache des Browsers, Cookies oder Daten anderer Website-Origins nicht leeren. Cache-Storage umfasst nur die Cache-API-Einträge dieses Origins.
+
 ## Änderungen
 
-Bei Änderungen an Formularen `src/Warenkorb.html`, die Elementreferenzen und Payloads in `src/Warenkorb.js` sowie die Java-Felder im Backend gemeinsam prüfen. Neue Layoutregeln kommen in `src/Warenkorb_Desin.css`; ergänzende Backend-Darstellung kann in `src/Warenkorb_Backend.css` bleiben. Bei Änderungen des API-Ursprungs `src/Warenkorb.html` anpassen und CORS der Backend-Umgebung prüfen. Die Produktions-Domains sind `https://my-scout.app` für GitHub Pages und `https://api.my-scout.app` für die API.
+Bei Änderungen an Formularen `src/index.html`, die Elementreferenzen und Payloads in `src/Warenkorb.js` sowie die Java-Felder im Backend gemeinsam prüfen. Neue Layoutregeln kommen in `src/Warenkorb_Desin.css`; ergänzende Backend-Darstellung kann in `src/Warenkorb_Backend.css` bleiben. Bei Änderungen des API-Ursprungs `src/index.html` anpassen und CORS der Backend-Umgebung prüfen. Die Produktions-Domains sind `https://my-scout.app` für GitHub Pages und `https://api.my-scout.app` für die API.
