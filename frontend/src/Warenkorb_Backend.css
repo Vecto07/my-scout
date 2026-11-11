@@ -1,1 +1,10 @@
 .article-thumbnail { width: 100%; height: 100%; object-fit: cover; }
+
+:root[data-theme="dark"] .brand-mark {
+  background-image: url("Logo-dark.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 30px 30px;
+}
+
+:root[data-theme="dark"] .brand-mark img { visibility: hidden; }
