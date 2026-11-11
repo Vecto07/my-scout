@@ -101,9 +101,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   height: 36px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--ink);
-  border-radius: 0;
-  
 
 }
 
