@@ -103,8 +103,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   place-items: center;
   border: 1px solid var(--ink);
   border-radius: 0;
-  background: var(--ink);
-  color: var(--surface);
+  
+
 }
 
 .brand-mark svg { width: 21px; height: 21px; }
