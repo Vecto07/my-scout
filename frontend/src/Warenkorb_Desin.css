@@ -101,10 +101,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   height: 36px;
   display: grid;
   place-items: center;
-
+  background: transparent;
 }
 
 .brand-mark svg { width: 21px; height: 21px; }
+.brand-mark img { display: block; width: 30px; height: 30px; object-fit: contain; }
 .brand-period { color: var(--accent); }
 
 .header-controls { display: flex; align-items: center; gap: 20px; }
