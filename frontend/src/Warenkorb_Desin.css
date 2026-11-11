@@ -101,7 +101,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   height: 36px;
   display: grid;
   place-items: center;
-  background: transparent;
+  background: var(--page);
 }
 
 .brand-mark svg { width: 21px; height: 21px; }
